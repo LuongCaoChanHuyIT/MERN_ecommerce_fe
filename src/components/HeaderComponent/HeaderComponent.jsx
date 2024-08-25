@@ -1,16 +1,17 @@
 import React from "react";
-import { Col } from "antd";
-import {
-  UserOutlined,
-  CaretDownOutlined,
-  ShoppingCartOutlined,
-} from "@ant-design/icons";
+import { Badge, Col } from "antd";
 import {
   WrapperHeader,
   WrapperTextHeader,
   WrapperHeaderAccount,
   WrapperTextHeaderSmall,
 } from "./style";
+import {
+  UserOutlined,
+  CaretDownOutlined,
+  ShoppingCartOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
 const HeaderComponent = () => {
   const onSearch = (value, _e, info) => console.log(info?.source, value);
@@ -22,6 +23,7 @@ const HeaderComponent = () => {
         </Col>
         <Col span={12}>
           <ButtonInputSearch
+            icon={<SearchOutlined />}
             placeholder="Tìm kiếm sản phẩm"
             textButton="Tìm kiếm"
             size="large"
@@ -46,12 +48,12 @@ const HeaderComponent = () => {
             </div>
           </WrapperHeaderAccount>
           <div>
-            <div>
+            <Badge count={4} size="small">
               <ShoppingCartOutlined
                 style={{ fontSize: "30px", color: "#fff" }}
               />
-              <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
-            </div>
+            </Badge>
+            <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
           </div>
         </Col>
       </WrapperHeader>

@@ -6,8 +6,7 @@ const InputComponent = ({ size, placeholder, ...rests }) => {
     <Input
       size={size}
       placeholder={placeholder}
-      bordered={false}
-      style={{ borderRadius: "0" }}
+      style={{ borderRadius: "0", border: "none" }}
       {...rests}
     />
   );

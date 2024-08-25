@@ -1,8 +1,7 @@
 import { Button } from "antd";
 import React from "react";
-import { SearchOutlined } from "@ant-design/icons";
 
-const ButtonComponent = ({ size, textButton, ...rests }) => {
+const ButtonComponent = ({ size, textButton, icon, ...rests }) => {
   return (
     <Button
       size={size}
@@ -12,7 +11,7 @@ const ButtonComponent = ({ size, textButton, ...rests }) => {
         backgroundColor: "rgb(13,92,182)",
         color: "#fff",
       }}
-      icon={<SearchOutlined />}
+      icon={icon}
       {...rests}
     >
       {textButton}
