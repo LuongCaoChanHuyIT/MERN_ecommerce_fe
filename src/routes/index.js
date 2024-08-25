@@ -24,19 +24,19 @@ export const routes = [
     isShowHeader: true,
   },
   {
-    path: "/type",
+    path: "/:type",
     page: TypeProductPage,
     isShowHeader: true,
   },
   {
     path: "/sign-in",
     page: SignInPage,
-    isShowHeader: true,
+    isShowHeader: false,
   },
   {
     path: "/sign-up",
     page: SignUpPage,
-    isShowHeader: true,
+    isShowHeader: false,
   },
   {
     path: "/product-detail",
