@@ -21,7 +21,7 @@ export const WrapperHeaderAccount = style.div`
   
 `;
 export const WrapperTextHeaderSmall = style.span`
-   font-size: 12px;
+    
    color: #fff;
    white-space: nowrap;
 `;
