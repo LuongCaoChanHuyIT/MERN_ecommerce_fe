@@ -13,8 +13,14 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
+import { useNavigate } from "react-router-dom";
+ 
 const HeaderComponent = () => {
   const onSearch = (value, _e, info) => console.log(info?.source, value);
+  const navigate = useNavigate();
+  const handleNavigateLogin = () => {
+    navigate("/sign-in");
+  };
   return (
     <div>
       <WrapperHeader gutter={20}>
@@ -39,7 +45,7 @@ const HeaderComponent = () => {
               <UserOutlined style={{ fontSize: "30px" }} />
             </div>
 
-            <div>
+            <div onClick={handleNavigateLogin} style={{ cursor: "pointer" }}>
               <WrapperTextHeaderSmall>Đăng nhập/Đăng ký</WrapperTextHeaderSmall>
               <div>
                 <WrapperTextHeaderSmall>Tài khoản</WrapperTextHeaderSmall>

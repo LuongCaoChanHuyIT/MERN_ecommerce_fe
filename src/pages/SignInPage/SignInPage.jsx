@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   WrapperContainerLeft,
   WrapperContainerRight,
@@ -8,7 +8,23 @@ import InputFormComponent from "../../components/InputFormComponent/InputFormCom
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { Image } from "antd";
 import accountImage from "../../assets/images/account.png";
+import { useNavigate } from "react-router-dom";
+import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 const SignInPage = () => {
+  const navigate = useNavigate();
+  const [isShowPassword, setIsShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleNavigateSignUp = () => {
+    navigate("/sign-up");
+  };
+  const handleOnChangeEmail = (value) => {
+    setEmail(value);
+  };
+  const handleOnChangePassword = (value) => {
+    setPassword(value);
+  };
   return (
     <div
       style={{
@@ -34,15 +50,42 @@ const SignInPage = () => {
           <InputFormComponent
             placeholder="abc@gmail.com"
             style={{ marginBottom: "10px" }}
+            value={email}
+            handleOnChange={handleOnChangeEmail}
           />
-          <InputFormComponent placeholder="password" />
+          <div style={{ position: "relative" }}>
+            <span
+              onClick={() => setIsShowPassword(!isShowPassword)}
+              style={{
+                zIndex: 10,
+                position: "absolute",
+                top: "4px",
+                right: "8px",
+              }}
+            >
+              {isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
+            </span>
+            <InputFormComponent
+              placeholder="password"
+              type={isShowPassword ? "text" : "password"}
+              value={password}
+              handleOnChange={handleOnChangePassword}
+            />
+          </div>
+
           <div style={{ margin: "10px" }}></div>
-          <ButtonComponent size="large" textButton="Đăng nhập" />
+          <ButtonComponent
+            size="large"
+            textButton="Đăng nhập"
+            disabled={!email.length || !password.length}
+          />
           <div style={{ marginTop: "auto" }}>
             <WrapperTextLight>Quên mật khẩu?</WrapperTextLight>
             <p>
-              Chưa có tài khoản? 
-              <WrapperTextLight>Tạo tài khoản</WrapperTextLight>
+              Chưa có tài khoản?
+              <WrapperTextLight onClick={handleNavigateSignUp}>
+                Tạo tài khoản
+              </WrapperTextLight>
             </p>
           </div>
         </WrapperContainerLeft>
