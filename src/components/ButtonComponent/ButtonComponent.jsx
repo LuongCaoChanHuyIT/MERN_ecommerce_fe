@@ -1,7 +1,14 @@
 import { Button } from "antd";
 import React from "react";
 
-const ButtonComponent = ({ size, textButton, icon, disabled, ...rests }) => {
+const ButtonComponent = ({
+  size,
+  textButton,
+  icon,
+  disabled,
+  onClick,
+  ...rests
+}) => {
   return (
     <Button
       size={size}
@@ -10,10 +17,11 @@ const ButtonComponent = ({ size, textButton, icon, disabled, ...rests }) => {
         border: "none",
         backgroundColor: disabled ? "#ccc" : "rgb(13,92,182)",
         color: "#fff",
-         
+        ...rests,
       }}
+      disabled={disabled ? true : false}
       icon={icon}
-      {...rests}
+      onClick={onClick}
     >
       {textButton}
     </Button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import {
@@ -8,9 +8,12 @@ import {
 } from "./style";
 import InputFormComponent from "../../components/InputFormComponent/InputFormComponent";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
-import { Image } from "antd";
+import { Image, message } from "antd";
 import accountImage from "../../assets/images/account.png";
-
+import * as UserService from "../../services/UserService";
+import { useMutationHooks } from "../../hooks/useMutationHooks";
+import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
+import * as MessageComponent from "../../components/MessageComponent/MessageComponent";
 const SignUpPage = () => {
   const navigate = useNavigate();
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -18,6 +21,9 @@ const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const mutation = useMutationHooks((data) => {
+    return UserService.signUpUser(data);
+  });
   const handleNavigateSignIn = () => {
     navigate("/sign-in");
   };
@@ -30,7 +36,18 @@ const SignUpPage = () => {
   const handleOnChangeConfirmPassword = (value) => {
     setConfirmPassword(value);
   };
-  const handleSignUp = () => {};
+  const { data, isPending, isError, isSuccess } = mutation;
+  const handleSignUp = () => {
+    mutation.mutate({ email, password, confirmPassword });
+  };
+  useEffect(() => {
+    if (isSuccess) {
+      message.success();
+      handleNavigateSignIn();
+    } else if (isError) {
+      message.error();
+    }
+  }, [isError, isSuccess]);
   return (
     <div
       style={{
@@ -96,14 +113,22 @@ const SignUpPage = () => {
               value={confirmPassword}
               handleOnChange={handleOnChangeConfirmPassword}
             />
-          </div>
+          </div>{" "}
+          {data?.status === "ERR" && (
+            <span style={{ color: "red", marginTop: "10px" }}>
+              {" "}
+              {data?.message}
+            </span>
+          )}
           <div style={{ margin: "10px" }}></div>
-          <ButtonComponent
-            disabled={!email.length || !password.length || !confirmPassword}
-            size="large"
-            textButton="Đăng ký"
-            onClick={handleSignUp}
-          />
+          <LoadingComponent isLoading={isPending}>
+            <ButtonComponent
+              disabled={!email.length || !password.length || !confirmPassword}
+              size="large"
+              textButton="Đăng ký"
+              onClick={handleSignUp}
+            />
+          </LoadingComponent>
           <div style={{ marginTop: "auto" }}>
             <p>
               Đã có tài khoản?
@@ -121,7 +146,7 @@ const SignUpPage = () => {
             height="203px"
             width="203px"
           />
-          <h4>Mua sắm tại Tiki</h4>
+          <h4>Mua sắm tại Ecom</h4>
         </WrapperContainerRight>
       </div>
     </div>

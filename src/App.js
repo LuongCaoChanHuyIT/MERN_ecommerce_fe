@@ -1,19 +1,51 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { routes } from "./routes";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-// Components
 import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
+import { isJsonString } from "./utils";
+import { jwtDecode } from "jwt-decode";
+import * as UserService from "./services/UserService";
+import { useDispatch } from "react-redux";
+import { updateUser } from "./redux/slides/userSlide";
+
 function App() {
-  // const fetchApi = async () => {
-  //   const res = await axios.get(
-  //     `${process.env.REACT_APP_API_URL}/product/getAll`
-  //   );
-  //   return res;
-  // };
-  // const query = useQuery({ queryKey: ["todos"], queryFn: fetchApi });
-  // console.log(query);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const { storageData, decoded } = handleDecoded();
+    if (decoded?.id) {
+      handleGetDetailUser(decoded?.id, storageData);
+    }
+  }, []);
+  const handleDecoded = () => {
+    let storageData = localStorage.getItem("access_token");
+    let decoded = {};
+    if (storageData && isJsonString(storageData)) {
+      storageData = JSON.parse(storageData);
+      decoded = jwtDecode(storageData);
+    }
+    return { decoded, storageData };
+  };
+  UserService.axiosJWT.interceptors.request.use(
+    async (config) => {
+      const { decoded } = handleDecoded();
+
+      const currentTime = new Date();
+      if (decoded?.exp < currentTime.getTime() / 1000) {
+        const data = await UserService.refreshToken();
+        console.log(data);
+        config.headers["token"] = `Beare ${data?.access_token}`;
+      }
+      return config;
+    },
+    async function (error) {
+      // Do something with request error
+      return Promise.reject(error);
+    }
+  );
+  const handleGetDetailUser = async (id, token) => {
+    const res = await UserService.getDetailUser(id, token);
+    dispatch(updateUser({ ...res?.data, access_token: token }));
+  };
   return (
     <div>
       <Router>

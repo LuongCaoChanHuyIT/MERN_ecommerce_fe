@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from "react";
 import {
   WrapperContainerLeft,
   WrapperContainerRight,
@@ -6,16 +7,39 @@ import {
 } from "./style";
 import InputFormComponent from "../../components/InputFormComponent/InputFormComponent";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
+import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { Image } from "antd";
 import accountImage from "../../assets/images/account.png";
 import { useNavigate } from "react-router-dom";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
+import * as UserService from "../../services/UserService";
+import { useMutationHooks } from "../../hooks/useMutationHooks";
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../redux/slides/userSlide";
 const SignInPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const mutation = useMutationHooks((data) => {
+    return UserService.loginUser(data);
+  });
 
+  const { data, isPending } = mutation;
+  useEffect(() => {
+    if (data?.status === "OK") {
+      navigate("/");
+      localStorage.setItem("access_token", JSON.stringify(data?.access_token));
+      if (data?.access_token) {
+        const decoded = jwtDecode(data?.access_token);
+        if (decoded?.id) {
+          handleGetDetailUser(decoded?.id, data?.access_token);
+        }
+      }
+    }
+  }, [data?.status]);
   const handleNavigateSignUp = () => {
     navigate("/sign-up");
   };
@@ -25,6 +49,14 @@ const SignInPage = () => {
   const handleOnChangePassword = (value) => {
     setPassword(value);
   };
+  const handleSignIn = () => {
+    mutation.mutate({ email, password });
+  };
+  const handleGetDetailUser = async (id, token) => {
+    const res = await UserService.getDetailUser(id, token);
+    dispatch(updateUser({ ...res?.data, access_token: token }));
+  };
+
   return (
     <div
       style={{
@@ -73,12 +105,22 @@ const SignInPage = () => {
             />
           </div>
 
+          {data?.status === "ERR" && (
+            <span style={{ color: "red", marginTop: "10px" }}>
+              {data?.message}
+            </span>
+          )}
+
           <div style={{ margin: "10px" }}></div>
-          <ButtonComponent
-            size="large"
-            textButton="Đăng nhập"
-            disabled={!email.length || !password.length}
-          />
+          <LoadingComponent isLoading={isPending}>
+            <ButtonComponent
+              size="large"
+              textButton="Đăng nhập"
+              disabled={!email.length || !password.length}
+              onClick={handleSignIn}
+              width="100%"
+            />
+          </LoadingComponent>
           <div style={{ marginTop: "auto" }}>
             <WrapperTextLight>Quên mật khẩu?</WrapperTextLight>
             <p>
@@ -97,7 +139,7 @@ const SignInPage = () => {
             height="203px"
             width="203px"
           />
-          <h4>Mua sắm tại Tiki</h4>
+          <h4>Mua sắm tại Ecom</h4>
         </WrapperContainerRight>
       </div>
     </div>
