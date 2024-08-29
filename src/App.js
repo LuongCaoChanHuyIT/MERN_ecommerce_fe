@@ -15,7 +15,7 @@ function App() {
     if (decoded?.id) {
       handleGetDetailUser(decoded?.id, storageData);
     }
-  }, []);
+  });
   const handleDecoded = () => {
     let storageData = localStorage.getItem("access_token");
     let decoded = {};
@@ -32,7 +32,6 @@ function App() {
       const currentTime = new Date();
       if (decoded?.exp < currentTime.getTime() / 1000) {
         const data = await UserService.refreshToken();
-        console.log(data);
         config.headers["token"] = `Beare ${data?.access_token}`;
       }
       return config;

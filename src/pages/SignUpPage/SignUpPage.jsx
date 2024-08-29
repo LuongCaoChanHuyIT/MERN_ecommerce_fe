@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
@@ -8,7 +9,7 @@ import {
 } from "./style";
 import InputFormComponent from "../../components/InputFormComponent/InputFormComponent";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
-import { Image, message } from "antd";
+import { Image } from "antd";
 import accountImage from "../../assets/images/account.png";
 import * as UserService from "../../services/UserService";
 import { useMutationHooks } from "../../hooks/useMutationHooks";
@@ -42,10 +43,10 @@ const SignUpPage = () => {
   };
   useEffect(() => {
     if (isSuccess) {
-      message.success();
+      MessageComponent.success();
       handleNavigateSignIn();
     } else if (isError) {
-      message.error();
+      MessageComponent.error();
     }
   }, [isError, isSuccess]);
   return (
