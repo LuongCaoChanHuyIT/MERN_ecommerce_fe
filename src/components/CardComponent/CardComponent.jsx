@@ -9,7 +9,19 @@ import {
   WrapperStyleTextSell,
 } from "./style";
 
-const CardComponent = () => {
+const CardComponent = (props) => {
+  const {
+    countInStock,
+    description,
+    image,
+    name,
+    price,
+    rating,
+    type,
+    selled,
+    discount,
+  } = props;
+
   return (
     <Card
       hoverable
@@ -26,18 +38,25 @@ const CardComponent = () => {
         />
       }
     >
-      <StyleNameProduct>Iphone</StyleNameProduct>
+      <StyleNameProduct>{name}</StyleNameProduct>
       <WrapperReportText>
         <span>
-          <span>4.5</span>
+          <span>{rating}</span>
           <StarFilled
-            style={{ fontSize: "1.2rem", color: "rgb(253, 216, 54)" }}
+            style={{
+              fontSize: "0.8rem",
+              color: "rgb(253, 216, 54)",
+              margin: "3px",
+            }}
           />
         </span>
-        <WrapperStyleTextSell> | Đã bán 1000+ </WrapperStyleTextSell>
+        <WrapperStyleTextSell>
+          {" "}
+          | Đã bán {selled || 1000}+{" "}
+        </WrapperStyleTextSell>
       </WrapperReportText>
       <WrapperPriceText>
-        1.000.000d<WrapperDiscountText>-5%</WrapperDiscountText>
+        {price}d<WrapperDiscountText>-{discount || 5}%</WrapperDiscountText>
       </WrapperPriceText>
     </Card>
   );

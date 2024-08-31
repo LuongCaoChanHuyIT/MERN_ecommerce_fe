@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Badge, Col, Popover } from "antd";
+import { Badge, Col, Image, Popover } from "antd";
 import {
   WrapperHeader,
   WrapperTextHeader,
@@ -39,7 +39,14 @@ const HeaderComponent = () => {
       <WrapprerContentPopup onClick={handleLogout}>
         Đăng xuất
       </WrapprerContentPopup>
-      <WrapprerContentPopup>Thông tin người dùng</WrapprerContentPopup>
+      <WrapprerContentPopup onClick={() => navigate("/profile-user")}>
+        Thông tin người dùng
+      </WrapprerContentPopup>
+      {user?.isAdmin && (
+        <WrapprerContentPopup onClick={() => navigate("/system/admin")}>
+          Quản lý hệ thống
+        </WrapprerContentPopup>
+      )}
     </div>
   );
   return (
@@ -64,11 +71,30 @@ const HeaderComponent = () => {
           <LoadingComponent isLoading={loading}>
             <WrapperHeaderAccount>
               <div>
-                <UserOutlined style={{ fontSize: "30px" }} />
+                {user?.avatar ? (
+                  <Image
+                    src={user?.avatar}
+                    style={{
+                      height: "40px",
+                      width: "40px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                    alt="avatar"
+                  />
+                ) : (
+                  <UserOutlined style={{ fontSize: "30px" }} />
+                )}
               </div>
-              {user?.name ? (
-                <Popover trigger={"click"} content={content}>
-                  <div style={{ cursor: "pointer" }}>{user?.name}</div>
+              {user?.access_token ? (
+                <Popover
+                  trigger={"click"}
+                  content={content}
+                  style={{ padding: "0" }}
+                >
+                  <div style={{ cursor: "pointer" }}>
+                    {user?.name || user?.email || "User"}
+                  </div>
                 </Popover>
               ) : (
                 <div
@@ -87,14 +113,10 @@ const HeaderComponent = () => {
             </WrapperHeaderAccount>
           </LoadingComponent>
 
-          <div>
-            <Badge count={4} size="small">
-              <ShoppingCartOutlined
-                style={{ fontSize: "30px", color: "#fff" }}
-              />
-            </Badge>
-            <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
-          </div>
+          <Badge count={4} size="small">
+            <ShoppingCartOutlined style={{ fontSize: "30px", color: "#fff" }} />
+          </Badge>
+          <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
         </Col>
       </WrapperHeader>
     </div>

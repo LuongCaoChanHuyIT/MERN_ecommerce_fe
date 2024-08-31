@@ -83,7 +83,7 @@ const SignInPage = () => {
             placeholder="abc@gmail.com"
             style={{ marginBottom: "10px" }}
             value={email}
-            handleOnChange={handleOnChangeEmail}
+            onChange={handleOnChangeEmail}
           />
           <div style={{ position: "relative" }}>
             <span
@@ -101,7 +101,7 @@ const SignInPage = () => {
               placeholder="password"
               type={isShowPassword ? "text" : "password"}
               value={password}
-              handleOnChange={handleOnChangePassword}
+              onChange={handleOnChangePassword}
             />
           </div>
 

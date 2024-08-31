@@ -8,10 +8,10 @@ export const WrapperHeader = styled(Row)`
   flex-wrap: nowrap;
 `;
 export const WrapperTextHeader = styled.span`
-  font-size: 18px;
+  font-size: 1.8rem;
   color: #fff;
   font-weight: bold;
-  text-align: flex;
+  text-align: left;
 `;
 export const WrapperHeaderAccount = styled.div`
   display: flex;
@@ -26,7 +26,6 @@ export const WrapperTextHeaderSmall = styled.span`
 export const WrapprerContentPopup = styled.p`
   cursor: pointer;
   &:hover {
-    background-color: rgb(26, 148, 255);
-    color: #fff;
+    color: rgb(26, 148, 255);
   }
 `;

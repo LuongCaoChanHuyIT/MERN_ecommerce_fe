@@ -5,11 +5,13 @@ import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
 import { isJsonString } from "./utils";
 import { jwtDecode } from "jwt-decode";
 import * as UserService from "./services/UserService";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "./redux/slides/userSlide";
 
 function App() {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+
   useEffect(() => {
     const { storageData, decoded } = handleDecoded();
     if (decoded?.id) {
@@ -51,11 +53,13 @@ function App() {
         <Routes>
           {routes.map((route, i) => {
             const Page = route.page;
+            const isCheckAuth = !route.isPrivate || user.isAdmin;
             const Layout = route.isShowHeader ? DefaultComponent : Fragment;
+
             return (
               <Route
                 key={i}
-                path={route.path}
+                path={isCheckAuth ? route.path : ""}
                 element={
                   <>
                     <Layout>

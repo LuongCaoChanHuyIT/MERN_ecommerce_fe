@@ -3,7 +3,7 @@ import React from "react";
 
 const LoadingComponent = ({ children, isLoading, delay = 200 }) => {
   return (
-    <div style={{ width: "100%" }}>
+    <div>
       <Spin spinning={isLoading} delay={500}>
         {children}
       </Spin>
