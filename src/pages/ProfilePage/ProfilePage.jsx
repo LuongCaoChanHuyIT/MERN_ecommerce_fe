@@ -152,11 +152,7 @@ const ProfilePage = () => {
                 alt="avatar"
               />
             )}
-            {/* <InputFormComponent
-              style={{ width: "300px" }}
-              value={avatar}
-              onChange={handleOnChangeAvatar}
-            /> */}
+
             <ButtonComponent
               size={"lagre"}
               textButton={"Cập nhật"}

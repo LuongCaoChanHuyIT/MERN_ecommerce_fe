@@ -1,20 +1,53 @@
 import React from "react";
 import { WrapperInputStyle } from "./style";
+import { InputNumber, Mentions } from "antd";
 const InputFormComponent = (props) => {
-  const { placeholder = "Text input", ...rests } = props;
+  const { placeholder, type, ...rests } = props;
   const handleOnChangeInput = (e) => {
     props.onChange(e.target.value);
+    // props.onChange(e);
   };
-  return (
-    <>
-      <WrapperInputStyle
-        placeholder={placeholder}
-        defaultValue={props.value}
-        {...rests}
-        onChange={handleOnChangeInput}
-      ></WrapperInputStyle>
-    </>
-  );
+  const handleOnChangeInputNumber = (e) => {
+    props.onChange(e);
+  };
+  const handleOnChangeInputParagraph = (e) => {
+    props.onChange(e);
+  };
+  const renderInputForType = (type) => {
+    switch (type) {
+      case "NUMBER":
+        return (
+          <InputNumber
+            min={1}
+            {...rests}
+            value={props.value}
+            onChange={handleOnChangeInputNumber}
+          />
+        );
+      case "TEXT":
+        return (
+          <WrapperInputStyle
+            placeholder={placeholder}
+            defaultValue={props.value}
+            {...rests}
+            onChange={handleOnChangeInput}
+          ></WrapperInputStyle>
+        );
+      case "PARAGRAPH":
+        return (
+          <Mentions
+            {...rests}
+            rows={3}
+            placeholder="Mô tả sản phẩm"
+            onChange={handleOnChangeInputParagraph}
+          />
+        );
+
+      default:
+        <></>;
+    }
+  };
+  return <>{renderInputForType(type)}</>;
 };
 
 export default InputFormComponent;
