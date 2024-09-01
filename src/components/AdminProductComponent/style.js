@@ -1,4 +1,4 @@
-import { Upload } from "antd";
+import { Image, Upload } from "antd";
 import styled from "styled-components";
 
 export const WrapperHeader = styled.h1`
@@ -17,6 +17,7 @@ export const WrapperForm = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: relative;
 `;
 export const WrapperLableInput = styled.div`
   display: flex;
@@ -33,5 +34,28 @@ export const WrapperUploadFile = styled(Upload)`
   .ant-upload-list-item-container {
     display: none !important;
   }
-  /* position: relative; */
+  position: absolute;
+  top: calc(100% - 32px);
+  bottom: auto;
+
+  right: auto;
+`;
+
+export const WrapperFileImage = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+  align-items: center;
+`;
+export const WrapperContent = styled.div`
+  display: flex;
+  gap: 20px;
+`;
+export const WrapperLableImage = styled.div`
+  color: #000;
+  font-size: 1rem;
+  text-align: left;
+  width: 150px;
+  margin-right: auto;
 `;
