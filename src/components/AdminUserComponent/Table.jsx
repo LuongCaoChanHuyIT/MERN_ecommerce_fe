@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { WrapperButtonTable } from "./style";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
 import { Image, Spin, Table } from "antd";
-import { useQueryHooks } from "../../hooks/useQueryHooks";
-import * as UserService from "../../services/UserService";
-import { useSelector } from "react-redux";
-const Create = () => {
-  const user = useSelector((state) => state.user);
+
+const Create = ({
+  handleDeleteUser,
+  handleDetailUser,
+  handleCreateUser,
+  dataUsers,
+  isLoadingUser,
+}) => {
   const [rowSelected, setRowSelected] = useState();
   const renderAvatar = (image) => {
     return (
@@ -38,11 +40,11 @@ const Create = () => {
         <div>
           <DeleteOutlined
             style={{ fontSize: "20px", color: "red" }}
-            //  onClick={handleDeletesProduct}
+            onClick={handleDeleteUser}
           />
           <EditOutlined
             style={{ fontSize: "20px", color: "orange" }}
-            //  onClick={handleDetailsProduct}
+            onClick={handleDetailUser}
           />
         </div>
       </>
@@ -84,16 +86,13 @@ const Create = () => {
       dataIndex: "",
     },
   ];
-  const getAllUser = async () => {
-    const res = await UserService.getAlluser(user?.access_token);
-    return res;
-  };
-  const queryUsers = useQueryHooks(getAllUser, "product");
-  const { data: dataUsers, isLoading: isLoadingUser } = queryUsers;
-  console.log(queryUsers);
+
+  // get data user
+
   const dataTable = dataUsers?.data?.map((user) => {
     return { ...user, key: user._id };
   });
+  //==========================================================================//
   return (
     <WrapperButtonTable>
       <ButtonComponent
@@ -104,6 +103,7 @@ const Create = () => {
         right="15px"
         top="10px"
         zIndex="1"
+        onClick={handleCreateUser}
       ></ButtonComponent>
       <Spin spinning={isLoadingUser}>
         <Table

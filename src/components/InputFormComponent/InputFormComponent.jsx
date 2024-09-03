@@ -38,7 +38,7 @@ const InputFormComponent = (props) => {
           <Mentions
             {...rests}
             rows={3}
-            placeholder="Mô tả sản phẩm"
+            placeholder={placeholder}
             onChange={handleOnChangeInputParagraph}
           />
         );
