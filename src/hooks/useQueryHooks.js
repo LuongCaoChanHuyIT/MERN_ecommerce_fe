@@ -4,7 +4,7 @@ export const useQueryHooks = (fnCallback, key) => {
   const query = useQuery({
     queryKey: [`${key}`],
     queryFn: fnCallback,
-    retry: 3,
+    retry: 1,
     retryDelay: 1000,
   });
 

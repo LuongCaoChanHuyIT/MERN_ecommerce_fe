@@ -2,7 +2,7 @@ import React from "react";
 import { WrapperInputStyle } from "./style";
 import { InputNumber, Mentions } from "antd";
 const InputFormComponent = (props) => {
-  const { placeholder, type, ...rests } = props;
+  const { placeholder, typeInput, ...rests } = props;
   const handleOnChangeInput = (e) => {
     props.onChange(e.target.value);
     // props.onChange(e);
@@ -13,8 +13,8 @@ const InputFormComponent = (props) => {
   const handleOnChangeInputParagraph = (e) => {
     props.onChange(e);
   };
-  const renderInputForType = (type) => {
-    switch (type) {
+  const renderInputForType = (typeInput) => {
+    switch (typeInput) {
       case "NUMBER":
         return (
           <InputNumber
@@ -47,7 +47,7 @@ const InputFormComponent = (props) => {
         <></>;
     }
   };
-  return <>{renderInputForType(type)}</>;
+  return <>{renderInputForType(typeInput)}</>;
 };
 
 export default InputFormComponent;

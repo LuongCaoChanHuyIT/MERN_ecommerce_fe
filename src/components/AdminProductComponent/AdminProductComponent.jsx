@@ -1,4 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Image, Input, message, Modal, Space } from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+
 import {
   WrapperHeader,
   WrapperButtonTable,
@@ -11,24 +20,18 @@ import {
   WrapperLableImage,
   WrapperButtonGroup,
 } from "./style";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import imgaeDefault from "../../assets/images/account.png";
+import { getBase64 } from "../../utils";
+import * as ProductService from "../../services/ProductService";
+import { useSelector } from "react-redux";
+import { useQueryHooks } from "../../hooks/useQueryHooks";
+import { useMutationHooks } from "../../hooks/useMutationHooks";
 import TableComponent from "../TableComponent/TableComponent";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
 import InputFormComponent from "../InputFormComponent//InputFormComponent";
-import { Button, Image, message, Modal } from "antd";
-import { getBase64 } from "../../utils";
-import * as ProductService from "../../services/ProductService";
-import { useMutationHooks } from "../../hooks/useMutationHooks";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
-import imgaeDefault from "../../assets/images/account.png";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
-import { useSelector } from "react-redux";
-import { useQueryHooks } from "../../hooks/useQueryHooks";
+// import Highlighter from "react-highlight-words";
 const AdminProductComponent = () => {
   //STATE
   const user = useSelector((state) => state.user);
@@ -44,13 +47,16 @@ const AdminProductComponent = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [dataTable, setDataTable] = useState([]);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [isShowModalDelete, setIsShowModalDelete] = useState();
+
+  const searchInput = useRef(null);
   const [stateProductDetail, setStateProductDetail] = useState({
     name: "",
     description: "",
     price: "",
     discount: "",
     countInStock: "",
-    type: "",
+    typeInput: "",
     image: "",
   });
   // INIT==========================
@@ -64,6 +70,10 @@ const AdminProductComponent = () => {
       data.product
     );
   });
+  const mutationDeleteProduct = useMutationHooks((data) => {
+    return ProductService.deleteProduct(data);
+  });
+  const { data: productDelete } = mutationDeleteProduct;
   const { data, isPending } = mutation;
   const { data: productUpdate } = mutationUpdateProduct;
 
@@ -75,6 +85,12 @@ const AdminProductComponent = () => {
   const { data: products, isPending: isPendingProduct } = queryGetAllProduct;
 
   //USE EFFECT========================
+  useEffect(() => {
+    if (productDelete?.status === "OK") {
+      setIsShowModalDelete(false);
+      message.success("Xóa sản phảm thành công!");
+    }
+  }, [productDelete?.status]);
   useEffect(() => {
     let data = products?.data?.map((product) => {
       return { ...product, key: product._id };
@@ -98,6 +114,7 @@ const AdminProductComponent = () => {
   useEffect(() => {
     if (productUpdate?.status === "OK") {
       message.success("Cập nhật sản phẩm thành công!");
+      setIsOpenDrawer(false);
     } else if (productUpdate?.message === "ERROR") {
       message.error("Cập nhật không thành công!");
     }
@@ -177,6 +194,17 @@ const AdminProductComponent = () => {
     });
   };
   // FUNCTION==========================
+  const onCancelDelete = () => {
+    setIsShowModalDelete(false);
+  };
+  const onOkDelete = () => {
+    // console.log(rowSelected);
+    mutationDeleteProduct.mutate(rowSelected, {
+      onSettled: () => {
+        queryGetAllProduct.refetch();
+      },
+    });
+  };
   const fetchGetDetailsProduct = async (rowSelected) => {
     const res = await ProductService.getDetailsProduct(rowSelected);
     if (res?.data) {
@@ -207,7 +235,7 @@ const AdminProductComponent = () => {
     setIsModalOpen(false);
   };
   const handleDeletesProduct = () => {
-     
+    setIsShowModalDelete(true);
   };
   const handleDetailsProduct = async () => {
     setIsOpenDrawer(true);
@@ -269,6 +297,112 @@ const AdminProductComponent = () => {
       </>
     );
   };
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={`${selectedKeys[0] || ""}`}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: "block",
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? "#1890ff" : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    // render: (text) =>
+    //   searchedColumn === dataIndex ? (
+    //     <Highlighter
+    //       highlightStyle={{
+    //         backgroundColor: "#ffc069",
+    //         padding: 0,
+    //       }}
+    //       searchWords={[searchText]}
+    //       autoEscape
+    //       textToHighlight={text ? text.toString() : ""}
+    //     />
+    //   ) : (
+    //     text
+    //   ),
+  });
   // ARRAY VALUE========================
   const columns = [
     {
@@ -280,10 +414,32 @@ const AdminProductComponent = () => {
       title: "Name",
       dataIndex: "name",
       // render: (text) => <a>{text}</a>,
+      sorter: (a, b) => a.name.lenght - b.name.lenght,
+      ...getColumnSearchProps("name"),
     },
     {
       title: "Price",
       dataIndex: "price",
+      sorter: (a, b) => a.price - b.price,
+      filters: [
+        {
+          text: ">= 50",
+          value: ">=",
+        },
+        {
+          text: "<= 50",
+          value: "<=",
+        },
+      ],
+      onFilter: (value, record) => {
+        if (value === ">=") {
+          return record.price >= 50;
+        } else {
+          return record.price <= 50;
+        }
+
+        // console.log(value, record)
+      },
     },
     {
       title: "rating",
@@ -317,20 +473,19 @@ const AdminProductComponent = () => {
           zIndex="1"
           onClick={() => setIsModalOpen(true)}
         ></ButtonComponent>
-        <div style={{ marginTop: "20px" }}>
-          <TableComponent
-            columns={columns}
-            data={dataTable}
-            isLoading={isPendingProduct}
-            onRow={(record) => {
-              return {
-                onClick: () => {
-                  setRowSelected(record._id);
-                },
-              };
-            }}
-          />
-        </div>
+
+        <TableComponent
+          columns={columns}
+          data={dataTable}
+          isLoading={isPendingProduct}
+          onRow={(record) => {
+            return {
+              onClick: () => {
+                setRowSelected(record._id);
+              },
+            };
+          }}
+        />
       </WrapperButtonTable>
       <Modal
         title="Tạo sản phẩm"
@@ -348,7 +503,7 @@ const AdminProductComponent = () => {
                   placeholder="Tên sản phẩm"
                   style={{ width: "250px" }}
                   value={name}
-                  type="TEXT"
+                  typeInput="TEXT"
                   onChange={handleOnChangeName}
                 />
               </WrapperLableInput>
@@ -358,7 +513,7 @@ const AdminProductComponent = () => {
                   style={{ width: "250px" }}
                   placeholder="Mô tả sản phẩm"
                   value={description}
-                  type="PARAGRAPH"
+                  typeInput="PARAGRAPH"
                   onChange={handleOnChangeDescription}
                 />
               </WrapperLableInput>
@@ -367,7 +522,7 @@ const AdminProductComponent = () => {
                 <InputFormComponent
                   style={{ width: "250px" }}
                   value={price}
-                  type="NUMBER"
+                  typeInput="NUMBER"
                   onChange={handleOnChangePrice}
                 />
               </WrapperLableInput>
@@ -376,7 +531,7 @@ const AdminProductComponent = () => {
                 <InputFormComponent
                   style={{ width: "250px" }}
                   value={discount}
-                  type="NUMBER"
+                  typeInput="NUMBER"
                   onChange={handleOnChangeDiscount}
                 />
               </WrapperLableInput>
@@ -385,7 +540,7 @@ const AdminProductComponent = () => {
                 <InputFormComponent
                   style={{ width: "250px" }}
                   value={countInStock}
-                  type="NUMBER"
+                  typeInput="NUMBER"
                   onChange={handleOnChangeCountInStock}
                 />
               </WrapperLableInput>
@@ -394,7 +549,7 @@ const AdminProductComponent = () => {
                 <InputFormComponent
                   style={{ width: "250px" }}
                   value={type}
-                  type="TEXT"
+                  typeInput="TEXT"
                   onChange={handleOnChangeType}
                 />
               </WrapperLableInput>
@@ -436,7 +591,7 @@ const AdminProductComponent = () => {
                   placeholder="Tên sản phẩm"
                   style={{ width: "250px" }}
                   value={stateProductDetail.name}
-                  type="TEXT"
+                  typeInput="TEXT"
                   onChange={handleOnChangeNameDetail}
                 />
               </WrapperLableInput>
@@ -446,7 +601,7 @@ const AdminProductComponent = () => {
                   style={{ width: "250px" }}
                   placeholder="Mô tả sản phẩm"
                   value={stateProductDetail.description}
-                  type="PARAGRAPH"
+                  typeInput="PARAGRAPH"
                   onChange={handleOnChangeDescriptionDetail}
                 />
               </WrapperLableInput>
@@ -455,7 +610,7 @@ const AdminProductComponent = () => {
                 <InputFormComponent
                   style={{ width: "250px" }}
                   value={stateProductDetail.price}
-                  type="NUMBER"
+                  typeInput="NUMBER"
                   onChange={handleOnChangePriceDetail}
                 />
               </WrapperLableInput>
@@ -464,7 +619,7 @@ const AdminProductComponent = () => {
                 <InputFormComponent
                   style={{ width: "250px" }}
                   value={stateProductDetail.discount}
-                  type="NUMBER"
+                  typeInput="NUMBER"
                   onChange={handleOnChangeDiscountDetail}
                 />
               </WrapperLableInput>
@@ -473,7 +628,7 @@ const AdminProductComponent = () => {
                 <InputFormComponent
                   style={{ width: "250px" }}
                   value={stateProductDetail.countInStock}
-                  type="NUMBER"
+                  typeInput="NUMBER"
                   onChange={handleOnChangeCountInStockDetail}
                 />
               </WrapperLableInput>
@@ -481,8 +636,8 @@ const AdminProductComponent = () => {
                 <WrapperLabel>Loại sản phẩm:</WrapperLabel>
                 <InputFormComponent
                   style={{ width: "250px" }}
-                  value={stateProductDetail.type}
-                  type="TEXT"
+                  value={stateProductDetail.typeInput}
+                  typeInput="TEXT"
                   onChange={handleOnChangeTypeDetail}
                 />
               </WrapperLableInput>
@@ -525,6 +680,18 @@ const AdminProductComponent = () => {
           </WrapperButtonGroup>
         </LoadingComponent>
       </DrawerComponent>
+      <Modal
+        title="Xóa sản phẩm"
+        open={isShowModalDelete}
+        onCancel={onCancelDelete}
+        onOk={onOkDelete}
+      >
+        <div>
+          <div>
+            <span>Bạn có muốn xóa sản phẩm ?</span>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

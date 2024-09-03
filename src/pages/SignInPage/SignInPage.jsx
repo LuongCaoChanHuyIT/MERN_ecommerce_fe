@@ -81,8 +81,9 @@ const SignInPage = () => {
           <p style={{ margin: "5px 0 20px" }}>Đăng nhập và tạo tài khoản</p>
           <InputFormComponent
             placeholder="abc@gmail.com"
-            style={{ marginBottom: "10px" }}
             value={email}
+            typeInput={"TEXT"}
+            style={{ marginBottom: "10px" }}
             onChange={handleOnChangeEmail}
           />
           <div style={{ position: "relative" }}>
@@ -100,6 +101,7 @@ const SignInPage = () => {
             <InputFormComponent
               placeholder="password"
               type={isShowPassword ? "text" : "password"}
+              typeInput="TEXT"
               value={password}
               onChange={handleOnChangePassword}
             />
@@ -110,7 +112,6 @@ const SignInPage = () => {
               {data?.message}
             </span>
           )}
-
           <div style={{ margin: "10px" }}></div>
           <LoadingComponent isLoading={isPending}>
             <ButtonComponent
