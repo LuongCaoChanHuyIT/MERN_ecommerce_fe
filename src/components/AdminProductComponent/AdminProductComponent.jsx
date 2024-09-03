@@ -9,6 +9,7 @@ import {
   WrapperFileImage,
   WrapperContent,
   WrapperLableImage,
+  WrapperButtonGroup,
 } from "./style";
 import {
   DeleteOutlined,
@@ -25,10 +26,12 @@ import * as ProductService from "../../services/ProductService";
 import { useMutationHooks } from "../../hooks/useMutationHooks";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 import imgaeDefault from "../../assets/images/account.png";
-import { useQuery } from "@tanstack/react-query";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
+import { useSelector } from "react-redux";
+import { useQueryHooks } from "../../hooks/useQueryHooks";
 const AdminProductComponent = () => {
   //STATE
+  const user = useSelector((state) => state.user);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(1);
@@ -39,6 +42,8 @@ const AdminProductComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rowSelected, setRowSelected] = useState();
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+  const [dataTable, setDataTable] = useState([]);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [stateProductDetail, setStateProductDetail] = useState({
     name: "",
     description: "",
@@ -52,36 +57,30 @@ const AdminProductComponent = () => {
   const mutation = useMutationHooks((data) => {
     return ProductService.createProduct(data);
   });
+  const mutationUpdateProduct = useMutationHooks((data) => {
+    return ProductService.updateProduct(
+      data.id,
+      data.access_token,
+      data.product
+    );
+  });
   const { data, isPending } = mutation;
-  const fetchGetDetailsProduct = async (rowSelected) => {
-    const res = await ProductService.getDetailsProduct(rowSelected);
-    // console.log(res.data);
-    if (res?.data) {
-      setStateProductDetail({
-        name: res?.data?.name,
-        description: res?.data?.description,
-        price: res?.data?.price,
-        discount: res?.data?.discount,
-        countInStock: res?.data?.countInStock,
-        type: res?.data?.type,
-        image: res?.data?.image,
-      });
-    }
-  };
+  const { data: productUpdate } = mutationUpdateProduct;
+
   const getAllProducts = async () => {
     const res = await ProductService.getAllProduct();
     return res;
   };
-  const { data: products, isPending: isPendingProduct } = useQuery({
-    queryKey: ["products"],
-    queryFn: getAllProducts,
-    retry: 3,
-    retryDelay: 1000,
-  });
-  const dataTable = products?.data?.map((product) => {
-    return { ...product, key: product._id };
-  });
-  //USEEFFECT========================
+  const queryGetAllProduct = useQueryHooks(getAllProducts, "product");
+  const { data: products, isPending: isPendingProduct } = queryGetAllProduct;
+
+  //USE EFFECT========================
+  useEffect(() => {
+    let data = products?.data?.map((product) => {
+      return { ...product, key: product._id };
+    });
+    setDataTable(data);
+  }, [products?.data]);
   useEffect(() => {
     if (data?.message === "SUCCESS") {
       message.success("Thêm sản phẩm thành công!");
@@ -92,12 +91,17 @@ const AdminProductComponent = () => {
   }, [data?.message, data?.status]);
   useEffect(() => {
     if (rowSelected) {
+      setIsLoadingDetail(true);
       fetchGetDetailsProduct(rowSelected);
     }
-  }, [rowSelected]); 
-  // useEffect(() => {
-  //   setStateProductDetail(stateProductDetail);
-  // }, [stateProductDetail]);
+  }, [rowSelected]);
+  useEffect(() => {
+    if (productUpdate?.status === "OK") {
+      message.success("Cập nhật sản phẩm thành công!");
+    } else if (productUpdate?.message === "ERROR") {
+      message.error("Cập nhật không thành công!");
+    }
+  }, [productUpdate?.status, productUpdate?.message]);
   // ONCHANGE=========================
   // PRODUCT==========================
   const handleOnChangeName = (value) => {
@@ -173,6 +177,21 @@ const AdminProductComponent = () => {
     });
   };
   // FUNCTION==========================
+  const fetchGetDetailsProduct = async (rowSelected) => {
+    const res = await ProductService.getDetailsProduct(rowSelected);
+    if (res?.data) {
+      setStateProductDetail({
+        name: res?.data?.name,
+        description: res?.data?.description,
+        price: res?.data?.price,
+        discount: res?.data?.discount,
+        countInStock: res?.data?.countInStock,
+        type: res?.data?.type,
+        image: res?.data?.image,
+      });
+      setIsLoadingDetail(false);
+    }
+  };
   const handleOk = () => {
     mutation.mutate({
       name,
@@ -188,11 +207,9 @@ const AdminProductComponent = () => {
     setIsModalOpen(false);
   };
   const handleDeletesProduct = () => {
-    setIsOpenDrawer(true);
-    console.log(rowSelected);
+     
   };
   const handleDetailsProduct = async () => {
-    // console.log("rowSelected", rowSelected);
     setIsOpenDrawer(true);
   };
   const renderAction = () => {
@@ -211,8 +228,54 @@ const AdminProductComponent = () => {
       </>
     );
   };
-  // ARRAYVALUE========================
+  const handleUpdateProduct = () => {
+    let id = rowSelected;
+    let access_token = user?.access_token;
+    let product = stateProductDetail;
+    mutationUpdateProduct.mutate(
+      {
+        id,
+        access_token,
+        product,
+      },
+      {
+        onSettled: () => {
+          queryGetAllProduct.refetch();
+        },
+      }
+    );
+  };
+  const renderImage = (data) => {
+    return (
+      <>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Image
+            src={data}
+            style={{
+              height: "50px",
+              width: "auto",
+              objectFit: "cover",
+            }}
+            alt="avatar"
+          />
+        </div>
+      </>
+    );
+  };
+  // ARRAY VALUE========================
   const columns = [
+    {
+      title: "",
+      dataIndex: "image",
+      render: renderImage,
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -235,6 +298,10 @@ const AdminProductComponent = () => {
       dataIndex: "Action",
       render: renderAction,
     },
+    {
+      title: "",
+      dataIndex: "",
+    },
   ];
   return (
     <div>
@@ -255,9 +322,9 @@ const AdminProductComponent = () => {
             columns={columns}
             data={dataTable}
             isLoading={isPendingProduct}
-            onRow={(record, rowIndex) => {
+            onRow={(record) => {
               return {
-                onClick: (event) => {
+                onClick: () => {
                   setRowSelected(record._id);
                 },
               };
@@ -360,7 +427,7 @@ const AdminProductComponent = () => {
         isOpen={isOpenDrawer}
         onClose={() => setIsOpenDrawer(false)}
       >
-        <LoadingComponent isLoading={isPendingProduct}>
+        <LoadingComponent isLoading={isLoadingDetail}>
           <WrapperContent>
             <WrapperForm>
               <WrapperLableInput>
@@ -446,8 +513,16 @@ const AdminProductComponent = () => {
                   Upload
                 </Button>
               </WrapperUploadFile>
-            </WrapperFileImage>
+            </WrapperFileImage>{" "}
           </WrapperContent>
+          <WrapperButtonGroup>
+            <ButtonComponent
+              size={"large"}
+              textButton={"Cập nhật sản phẩm"}
+              marginTop="20px"
+              onClick={handleUpdateProduct}
+            ></ButtonComponent>
+          </WrapperButtonGroup>
         </LoadingComponent>
       </DrawerComponent>
     </div>

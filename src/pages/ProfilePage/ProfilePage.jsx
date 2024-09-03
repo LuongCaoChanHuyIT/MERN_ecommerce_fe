@@ -84,6 +84,7 @@ const ProfilePage = () => {
             <InputFormComponent
               style={{ width: "300px" }}
               value={name}
+              type="TEXT"
               onChange={handleOnChangeName}
             />
             <ButtonComponent
@@ -98,6 +99,7 @@ const ProfilePage = () => {
             <InputFormComponent
               style={{ width: "300px" }}
               value={email}
+              type="TEXT"
               onChange={handleOnChangeEmail}
             />
             <ButtonComponent
@@ -112,6 +114,7 @@ const ProfilePage = () => {
             <InputFormComponent
               style={{ width: "300px" }}
               value={phone}
+              type="TEXT"
               onChange={handleOnChangePhone}
             />
             <ButtonComponent
@@ -126,6 +129,7 @@ const ProfilePage = () => {
             <InputFormComponent
               style={{ width: "300px" }}
               value={address}
+              type="TEXT"
               onChange={handleOnChangeAddress}
             />
             <ButtonComponent

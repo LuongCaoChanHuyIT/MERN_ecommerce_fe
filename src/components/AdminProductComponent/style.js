@@ -1,4 +1,4 @@
-import { Image, Upload } from "antd";
+import { Upload } from "antd";
 import styled from "styled-components";
 
 export const WrapperHeader = styled.h1`
@@ -58,4 +58,12 @@ export const WrapperLableImage = styled.div`
   text-align: left;
   width: 150px;
   margin-right: auto;
+`;
+export const WrapperButtonGroup = styled.div`
+  margin: 50px 0;
+  border-top: 1px solid #ccc;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 `;
