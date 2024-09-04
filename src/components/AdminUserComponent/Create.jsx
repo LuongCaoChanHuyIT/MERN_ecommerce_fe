@@ -1,5 +1,5 @@
 import { Button, Image, Modal, Spin } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   WrapperContent,
   WrapperFileImage,
@@ -16,15 +16,15 @@ import { getBase64 } from "../../utils";
 import { createUser } from "../../services/UserService";
 import { useMutationHooks } from "../../hooks/useMutationHooks";
 import { useSelector } from "react-redux";
-const Create = ({ isOpenCreate, setIsOpenCreate, dataUsers }) => {
+const Create = ({ isOpenCreate, setIsOpenCreate, dataUserRefetch }) => {
   // Set states and on change START============================
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [avatar, setAvatar] = useState("");
+  const [name, setName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [confirmPassword, setConfirmPassword] = useState();
+  const [phone, setPhone] = useState();
+  const [address, setAddress] = useState();
+  const [avatar, setAvatar] = useState();
   const handleOnChangeName = (value) => {
     setName(value);
   };
@@ -45,35 +45,36 @@ const Create = ({ isOpenCreate, setIsOpenCreate, dataUsers }) => {
   };
   const handleOnChangeAvatar = async ({ fileList }) => {
     const file = fileList[0];
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
+    if (file) {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj);
+      }
+      setAvatar(file.preview);
     }
-    setAvatar(file.preview);
   };
   // Set states and on change END=============================
   const user = useSelector((state) => state.user);
   const mutation = useMutationHooks((data) => {
     return createUser(user?.access_token, data);
   });
+  const { data, isPending } = mutation;
+  useEffect(() => {
+    if (data?.status === "OK") {
+      dataUserRefetch();
+      setIsOpenCreate(false);
+    }
+  }, [data?.status, dataUserRefetch, setIsOpenCreate]);
   const handleOk = () => {
     if (password === confirmPassword) {
-      mutation.mutate(
-        {
-          name,
-          email,
-          password,
-          confirmPassword,
-          phone,
-          address,
-          avatar,
-        },
-        {
-          onSettled: () => {
-            dataUsers.refetch();
-          },
-        }
-      );
-      setIsOpenCreate(false);
+      mutation.mutate({
+        name,
+        email,
+        password,
+        confirmPassword,
+        phone,
+        address,
+        avatar,
+      });
     }
   };
   const handleCancel = () => {
@@ -87,7 +88,7 @@ const Create = ({ isOpenCreate, setIsOpenCreate, dataUsers }) => {
       onOk={handleOk}
       onCancel={handleCancel}
     >
-      <Spin spinning={false}>
+      <Spin spinning={isPending}>
         <WrapperContent>
           <WrapperForm>
             <WrapperLableInput>

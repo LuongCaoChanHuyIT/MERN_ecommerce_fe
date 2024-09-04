@@ -4,14 +4,14 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
 import { Image, Spin, Table } from "antd";
 
-const Create = ({
+const TableUser = ({
   handleDeleteUser,
   handleDetailUser,
   handleCreateUser,
   dataUsers,
   isLoadingUser,
+  setRowSelected,
 }) => {
-  const [rowSelected, setRowSelected] = useState();
   const renderAvatar = (image) => {
     return (
       <div
@@ -122,4 +122,4 @@ const Create = ({
   );
 };
 
-export default Create;
+export default TableUser;

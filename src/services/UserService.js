@@ -61,10 +61,20 @@ export const getAlluser = async (access_token) => {
   return res.data;
 };
 export const createUser = async (access_token, data) => {
-  // console.log(access_token)
   const res = await axiosJWT.post(
     `${process.env.REACT_APP_API_URL}/user/sign-up`,
     data,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
+  );
+  return res.data;
+};
+export const deleteUser = async (id, access_token) => {
+  const res = await axiosJWT.delete(
+    `${process.env.REACT_APP_API_URL}/user/delete-user/${id}`,
     {
       headers: {
         token: `Bearer ${access_token}`,

@@ -2,7 +2,7 @@ import React from "react";
 import { WrapperInputStyle } from "./style";
 import { InputNumber, Mentions } from "antd";
 const InputFormComponent = (props) => {
-  const { placeholder, typeInput, ...rests } = props;
+  const { placeholder, typeInput, disabled = false, ...rests } = props;
   const handleOnChangeInput = (e) => {
     props.onChange(e.target.value);
     // props.onChange(e);
@@ -29,6 +29,7 @@ const InputFormComponent = (props) => {
           <WrapperInputStyle
             placeholder={placeholder}
             defaultValue={props.value}
+            disabled={disabled}
             {...rests}
             onChange={handleOnChangeInput}
           ></WrapperInputStyle>
