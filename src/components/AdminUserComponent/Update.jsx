@@ -20,8 +20,8 @@ import { useSelector } from "react-redux";
 import { useMutationHooks } from "../../hooks/useMutationHooks";
 
 const Update = ({
-  isOpenDrawer,
-  setIsOpenDrawer,
+  isOpenUpdate,
+  setIsOpenUpdate,
   dataUserRefetch,
   rowSelected,
 }) => {
@@ -93,9 +93,10 @@ const Update = ({
     if (data?.status === "OK") {
       message.success("Cập nhật người dùng thành công!");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.status]);
   const onClose = () => {
-    setIsOpenDrawer(false);
+    setIsOpenUpdate(false);
   };
   const handleUpdateUser = () => {
     mutation.mutate({ name, email, phone, address, avatar });
@@ -103,7 +104,7 @@ const Update = ({
   return (
     <Drawer
       title="Chi tiết người dùng"
-      open={isOpenDrawer}
+      open={isOpenUpdate}
       size="large"
       onClose={onClose}
     >

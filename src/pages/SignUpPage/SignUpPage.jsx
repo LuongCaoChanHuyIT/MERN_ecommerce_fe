@@ -43,7 +43,7 @@ const SignUpPage = () => {
   };
   useEffect(() => {
     if (isSuccess) {
-      MessageComponent.success('Đăng ký thành công!');
+      MessageComponent.success("Đăng ký thành công!");
       handleNavigateSignIn();
     } else if (isError) {
       MessageComponent.error();
@@ -75,6 +75,7 @@ const SignUpPage = () => {
             placeholder="abc@gmail.com"
             style={{ marginBottom: "10px" }}
             value={email}
+            typeInput="TEXT"
             onChange={handleOnChangeEmail}
           />
           <div style={{ position: "relative", marginBottom: "10px" }}>
@@ -93,6 +94,7 @@ const SignUpPage = () => {
               placeholder="password"
               type={isShowPassword ? "text" : "password"}
               value={password}
+              typeInput="TEXT"
               onChange={handleOnChangePassword}
             />
           </div>
@@ -112,6 +114,7 @@ const SignUpPage = () => {
               placeholder="confirm password"
               type={isShowConfirmPassword ? "text" : "password"}
               value={confirmPassword}
+              typeInput="TEXT"
               onChange={handleOnChangeConfirmPassword}
             />
           </div>{" "}

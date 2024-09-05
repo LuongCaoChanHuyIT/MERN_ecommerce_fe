@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { WrapperButtonTable } from "./style";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  DownOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
-import { Image, Spin, Table } from "antd";
-
+import { Dropdown, Image, message, Modal, Space, Spin, Table } from "antd";
+import { useMutationHooks } from "../../hooks/useMutationHooks";
+import { deleteUserMany } from "../../services/UserService";
+import { useSelector } from "react-redux";
 const TableUser = ({
   handleDeleteUser,
   handleDetailUser,
@@ -11,6 +18,7 @@ const TableUser = ({
   dataUsers,
   isLoadingUser,
   setRowSelected,
+  dataUserRefetch,
 }) => {
   const renderAvatar = (image) => {
     return (
@@ -87,38 +95,113 @@ const TableUser = ({
     },
   ];
 
-  // get data user
-
+  const user = useSelector((state) => state.user);
+  const [isOpenDeleteMany, setIsOpenDeleteMany] = useState(false);
+  const [isLoadingDeleteMany, setIsLoadingDeleteMany] = useState(false);
+  const [listCheck, setListCheck] = useState([]);
+  const mutationDeleteMany = useMutationHooks((list) => {
+    return deleteUserMany(list, user?.access_token);
+  });
+  const { data } = mutationDeleteMany;
   const dataTable = dataUsers?.data?.map((user) => {
     return { ...user, key: user._id };
   });
+  const rowSelection = {
+    onChange: (selectedRowKeys) => {
+      setListCheck(selectedRowKeys);
+    },
+    // getCheckboxProps: (record) => ({
+    //   disabled: record.name === "Disabled User",
+    //   // Column configuration not to be checked
+    //   name: record.name,
+    // }),
+  };
+  useEffect(() => {
+    if (data?.status === "OK") {
+      message.success("Xóa các user thành công!");
+      dataUserRefetch();
+      setIsLoadingDeleteMany(false);
+      setIsOpenDeleteMany(false);
+    } else if (data?.status === "ERROR") {
+      message.error("Chưa chọn user nào để xóa!");
+      setIsLoadingDeleteMany(false);
+      setIsOpenDeleteMany(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.status]);
+  const onCloseDeleteMany = () => {
+    setIsOpenDeleteMany(false);
+  };
+  const onOkDeleteMany = () => {
+    setIsLoadingDeleteMany(true);
+    mutationDeleteMany.mutate(listCheck);
+  };
+  const handleDeleteMany = () => {
+    setIsOpenDeleteMany(true);
+  };
+  const items = [
+    {
+      key: "1",
+      label: <div onClick={handleDeleteMany}>Xóa tất cả</div>,
+    },
+  ];
+
   //==========================================================================//
   return (
-    <WrapperButtonTable>
-      <ButtonComponent
-        size={"medium"}
-        icon={<PlusOutlined />}
-        padding="0 40px"
-        position="absolute"
-        right="15px"
-        top="10px"
-        zIndex="1"
-        onClick={handleCreateUser}
-      ></ButtonComponent>
-      <Spin spinning={isLoadingUser}>
-        <Table
-          columns={columns}
-          dataSource={dataTable}
-          onRow={(record) => {
-            return {
-              onClick: () => {
-                setRowSelected(record._id);
-              },
-            };
+    <>
+      <div>
+        <Dropdown
+          menu={{
+            items,
           }}
-        />
-      </Spin>
-    </WrapperButtonTable>
+        >
+          <span onClick={(e) => e.preventDefault()}>
+            <Space>
+              Menu action
+              <DownOutlined />
+            </Space>
+          </span>
+        </Dropdown>
+      </div>
+      <WrapperButtonTable>
+        <ButtonComponent
+          size={"medium"}
+          icon={<PlusOutlined />}
+          padding="0 40px"
+          position="absolute"
+          right="15px"
+          top="10px"
+          zIndex="1"
+          onClick={handleCreateUser}
+        ></ButtonComponent>
+        <Spin spinning={isLoadingUser}>
+          <Table
+            rowSelection={{
+              ...rowSelection,
+            }}
+            columns={columns}
+            dataSource={dataTable}
+            onRow={(record) => {
+              return {
+                onClick: () => {
+                  setRowSelected(record._id);
+                },
+              };
+            }}
+          />
+        </Spin>
+      </WrapperButtonTable>
+      <Modal
+        open={isOpenDeleteMany}
+        onCancel={onCloseDeleteMany}
+        onClose={onCloseDeleteMany}
+        onOk={onOkDeleteMany}
+      >
+        <Spin spinning={isLoadingDeleteMany}>
+          Bạn có chắc muốn xóa các người dùng đã chọn?
+        </Spin>
+      </Modal>
+    </>
   );
 };
 

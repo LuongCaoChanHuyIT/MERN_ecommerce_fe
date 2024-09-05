@@ -45,6 +45,7 @@ const AdminUserComponent = () => {
         dataUsers={dataUsers}
         setRowSelected={setRowSelected}
         isLoadingUser={isLoadingUser}
+        dataUserRefetch={dataUserRefetch}
       />
       <Create
         isOpenCreate={isOpenCreate}

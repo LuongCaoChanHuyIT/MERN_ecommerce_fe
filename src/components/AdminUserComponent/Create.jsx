@@ -1,4 +1,4 @@
-import { Button, Image, Modal, Spin } from "antd";
+import { Button, Image, message, Modal, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import {
   WrapperContent,
@@ -62,8 +62,10 @@ const Create = ({ isOpenCreate, setIsOpenCreate, dataUserRefetch }) => {
     if (data?.status === "OK") {
       dataUserRefetch();
       setIsOpenCreate(false);
+      message.success("Thêm người dùng thành công!");
     }
-  }, [data?.status, dataUserRefetch, setIsOpenCreate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.status]);
   const handleOk = () => {
     if (password === confirmPassword) {
       mutation.mutate({

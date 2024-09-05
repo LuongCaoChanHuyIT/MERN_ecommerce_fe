@@ -83,3 +83,16 @@ export const deleteUser = async (id, access_token) => {
   );
   return res.data;
 };
+export const deleteUserMany = async (ids, access_token) => {
+  // console.log(ids);
+  const res = await axiosJWT.post(
+    `${process.env.REACT_APP_API_URL}/user/delete-many-user`,
+    ids,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
+  );
+  return res.data;
+};
