@@ -1,9 +1,20 @@
 import axios from "axios";
 export const axiosJWT = axios.create();
-export const getAllProduct = async () => {
-  const res = await axiosJWT.get(
-    `${process.env.REACT_APP_API_URL}/product/getAll`
-  );
+export const getAllProduct = async (search, limit = 4) => {
+  let res = {};
+  console.log(limit);
+  if (!search) {
+    // console.log("co");
+    res = await axiosJWT.get(
+      `${process.env.REACT_APP_API_URL}/product/getAll?limit=${limit}`
+    );
+  } else {
+    res = await axiosJWT.get(
+      `${process.env.REACT_APP_API_URL}/product/getAll?filter=name&filter=${search}&limit=${limit}`
+    );
+    // console.log("ko");
+  }
+
   return res.data;
 };
 export const createProduct = async (data) => {

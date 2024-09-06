@@ -6,7 +6,7 @@ const ButtonInputSearch = (props) => {
   const { size, placeholder, textButton, icon } = props;
   return (
     <div style={{ display: "flex", backgroundColor: "#fff" }}>
-      <InputComponent size={size} placeholder={placeholder} />
+      <InputComponent size={size} placeholder={placeholder} {...props} />
       <ButtonComponent
         size={size}
         textButton={textButton}

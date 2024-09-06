@@ -19,12 +19,14 @@ import { useDispatch, useSelector } from "react-redux";
 import * as UserService from "../../services/UserService";
 import { resetUser } from "../../redux/slides/userSlide";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
+import { searchProduct } from "../../redux/slides/productSlide";
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate();
   const dispacth = useDispatch();
   const [loading, setLoading] = useState(false);
+  // const [search, setSearch] = useState("");
   const user = useSelector((state) => state.user);
-  const onSearch = (value, _e, info) => console.log(info?.source, value);
+
   const handleNavigateLogin = () => {
     navigate("/sign-in");
   };
@@ -43,12 +45,16 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         <WrapprerContentPopup onClick={() => navigate("/system/admin")}>
           Quản lý hệ thống
         </WrapprerContentPopup>
-      )}{" "}
+      )}
       <WrapprerContentPopup onClick={handleLogout}>
         Đăng xuất
       </WrapprerContentPopup>
     </div>
   );
+  const onSearch = (e) => {
+    // setSearch(e.target.value);
+    dispacth(searchProduct(e.target.value));
+  };
   return (
     <div>
       <WrapperHeader gutter={20}>
@@ -63,7 +69,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               placeholder="Tìm kiếm sản phẩm"
               textButton="Tìm kiếm"
               size="large"
-              onSearch={onSearch}
+              onChange={onSearch}
             />
           )}
         </Col>

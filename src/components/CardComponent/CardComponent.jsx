@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Card } from "antd";
 import { StarFilled } from "@ant-design/icons";
 import React from "react";
@@ -30,13 +31,7 @@ const CardComponent = (props) => {
         padding: "10px",
         borderRadius: "4px",
       }}
-      cover={
-        <img
-          alt="example"
-          src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
-          height={200}
-        />
-      }
+      cover={<img alt="example" src={image} height={200} />}
     >
       <StyleNameProduct>{name}</StyleNameProduct>
       <WrapperReportText>
@@ -50,13 +45,11 @@ const CardComponent = (props) => {
             }}
           />
         </span>
-        <WrapperStyleTextSell>
-          {" "}
-          | Đã bán {selled || 1000}+{" "}
-        </WrapperStyleTextSell>
+        <WrapperStyleTextSell>| Đã bán {selled || 1000}+ </WrapperStyleTextSell>
       </WrapperReportText>
       <WrapperPriceText>
-        {price}d<WrapperDiscountText>-{discount || 5}%</WrapperDiscountText>
+        {price.toLocaleString()}d
+        <WrapperDiscountText>-{discount || 5}%</WrapperDiscountText>
       </WrapperPriceText>
     </Card>
   );

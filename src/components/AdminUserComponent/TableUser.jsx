@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { WrapperButtonTable } from "./style";
 import {
   DeleteOutlined,
@@ -11,6 +11,7 @@ import { Dropdown, Image, message, Modal, Space, Spin, Table } from "antd";
 import { useMutationHooks } from "../../hooks/useMutationHooks";
 import { deleteUserMany } from "../../services/UserService";
 import { useSelector } from "react-redux";
+import { Excel } from "antd-table-saveas-excel";
 const TableUser = ({
   handleDeleteUser,
   handleDetailUser,
@@ -64,7 +65,7 @@ const TableUser = ({
   const columns = [
     {
       title: "",
-      dataIndex: "avatar",
+      dataIndex: "Avatar",
       render: renderAvatar,
     },
     {
@@ -94,11 +95,24 @@ const TableUser = ({
       dataIndex: "",
     },
   ];
-
   const user = useSelector((state) => state.user);
   const [isOpenDeleteMany, setIsOpenDeleteMany] = useState(false);
   const [isLoadingDeleteMany, setIsLoadingDeleteMany] = useState(false);
   const [listCheck, setListCheck] = useState([]);
+  const newColumnExport = useMemo(() => {
+    const filter = columns.filter((col) => {
+      if (
+        col.dataIndex !== "Action" &&
+        col.dataIndex !== "Avatar" &&
+        col.dataIndex !== ""
+      ) {
+        return col;
+      }
+    });
+    return filter;
+  }, [columns]);
+
+  // console.log(newColumnExport);
   const mutationDeleteMany = useMutationHooks((list) => {
     return deleteUserMany(list, user?.access_token);
   });
@@ -139,10 +153,24 @@ const TableUser = ({
   const handleDeleteMany = () => {
     setIsOpenDeleteMany(true);
   };
+  const exportExcel = () => {
+    const excel = new Excel();
+    excel
+      .addSheet("test")
+      .addColumns(newColumnExport)
+      .addDataSource(dataTable, {
+        str2Percent: true,
+      })
+      .saveAs("Excel.xlsx");
+  };
   const items = [
     {
       key: "1",
       label: <div onClick={handleDeleteMany}>Xóa tất cả</div>,
+    },
+    {
+      key: "2",
+      label: <div onClick={exportExcel}>Export excel</div>,
     },
   ];
 
@@ -163,6 +191,7 @@ const TableUser = ({
           </span>
         </Dropdown>
       </div>
+
       <WrapperButtonTable>
         <ButtonComponent
           size={"medium"}
