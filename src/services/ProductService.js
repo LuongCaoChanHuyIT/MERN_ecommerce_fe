@@ -1,8 +1,7 @@
 import axios from "axios";
 export const axiosJWT = axios.create();
-export const getAllProduct = async (search, limit = 4) => {
+export const getAllProduct = async (search, limit) => {
   let res = {};
-  console.log(limit);
   if (!search) {
     // console.log("co");
     res = await axiosJWT.get(
@@ -16,6 +15,14 @@ export const getAllProduct = async (search, limit = 4) => {
   }
 
   return res.data;
+};
+export const getProductType = async (type, page, limit) => {
+  if (type) {
+    const res = await axiosJWT.get(
+      `${process.env.REACT_APP_API_URL}/product/getAll?filter=type&filter=${type}&page=${page}&limit=${limit}`
+    );
+    return res.data;
+  }
 };
 export const createProduct = async (data) => {
   const res = await axios.post(
@@ -45,6 +52,12 @@ export const updateProduct = async (id, access_token, data) => {
 export const deleteProduct = async (id) => {
   const res = await axios.delete(
     `${process.env.REACT_APP_API_URL}/product/delete/${id}`
+  );
+  return res.data;
+};
+export const getAllTypeProduct = async () => {
+  const res = await axios.get(
+    `${process.env.REACT_APP_API_URL}/product/get-all-type`
   );
   return res.data;
 };

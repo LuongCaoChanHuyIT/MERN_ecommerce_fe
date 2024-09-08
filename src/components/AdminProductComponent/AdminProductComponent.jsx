@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Image, Input, message, Modal, Space } from "antd";
+import { Button, Image, Input, message, Modal, Select, Space } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -21,7 +21,7 @@ import {
   WrapperButtonGroup,
 } from "./style";
 import imgaeDefault from "../../assets/images/account.png";
-import { getBase64 } from "../../utils";
+import { getBase64, renderOption } from "../../utils";
 import * as ProductService from "../../services/ProductService";
 import { useSelector } from "react-redux";
 import { useQueryHooks } from "../../hooks/useQueryHooks";
@@ -31,6 +31,8 @@ import ButtonComponent from "../ButtonComponent/ButtonComponent";
 import InputFormComponent from "../InputFormComponent//InputFormComponent";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
+import * as ProductSevice from "../../services/ProductService";
+
 // import Highlighter from "react-highlight-words";
 const AdminProductComponent = () => {
   //STATE
@@ -48,8 +50,8 @@ const AdminProductComponent = () => {
   const [dataTable, setDataTable] = useState([]);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [isShowModalDelete, setIsShowModalDelete] = useState();
-
   const searchInput = useRef(null);
+  const [typeSelect, setTypeSelect] = useState();
   const [stateProductDetail, setStateProductDetail] = useState({
     name: "",
     description: "",
@@ -83,6 +85,12 @@ const AdminProductComponent = () => {
   };
   const queryGetAllProduct = useQueryHooks(getAllProducts, "product");
   const { data: products, isPending: isPendingProduct } = queryGetAllProduct;
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductSevice.getAllTypeProduct();
+    return res?.data;
+  };
+  const allTypeProduct = useQueryHooks(fetchAllTypeProduct, "type-product");
+  const { data: allType } = allTypeProduct;
 
   //USE EFFECT========================
   useEffect(() => {
@@ -119,8 +127,8 @@ const AdminProductComponent = () => {
       message.error("Cập nhật không thành công!");
     }
   }, [productUpdate?.status, productUpdate?.message]);
+
   // ONCHANGE=========================
-  // PRODUCT==========================
   const handleOnChangeName = (value) => {
     setName(value);
   };
@@ -139,6 +147,7 @@ const AdminProductComponent = () => {
   const handleOnChangeType = (value) => {
     setType(value);
   };
+
   const handleOnChangeImage = async ({ fileList }) => {
     const file = fileList[0];
     if (!file.url && !file.preview) {
@@ -146,7 +155,6 @@ const AdminProductComponent = () => {
     }
     setImage(file.preview);
   };
-
   const handleOnChangeNameDetail = (e) => {
     setStateProductDetail({
       ...stateProductDetail,
@@ -194,6 +202,7 @@ const AdminProductComponent = () => {
     });
   };
   // FUNCTION==========================
+
   const onCancelDelete = () => {
     setIsShowModalDelete(false);
   };
@@ -221,15 +230,22 @@ const AdminProductComponent = () => {
     }
   };
   const handleOk = () => {
-    mutation.mutate({
-      name,
-      description,
-      price,
-      discount,
-      countInStock,
-      type,
-      image,
-    });
+    mutation.mutate(
+      {
+        name,
+        description,
+        price,
+        discount,
+        countInStock,
+        type,
+        image,
+      },
+      {
+        onSettled: () => {
+          queryGetAllProduct.refetch();
+        },
+      }
+    );
   };
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -297,7 +313,7 @@ const AdminProductComponent = () => {
       </>
     );
   };
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+  const handleSearch = (confirm) => {
     confirm();
   };
   const handleReset = (clearFilters) => {
@@ -403,6 +419,14 @@ const AdminProductComponent = () => {
     //     text
     //   ),
   });
+  const handleChangeSelect = (value) => {
+    if (value !== "add_type") {
+      setType(value);
+      setStateProductDetail({ ...stateProductDetail, type: value });
+    } else {
+      setTypeSelect(value);
+    }
+  };
   // ARRAY VALUE========================
   const columns = [
     {
@@ -469,11 +493,10 @@ const AdminProductComponent = () => {
           padding="0 40px"
           position="absolute"
           right="15px"
-          top="30px"
+          top="10px"
           zIndex="1"
           onClick={() => setIsModalOpen(true)}
         ></ButtonComponent>
-
         <TableComponent
           columns={columns}
           data={dataTable}
@@ -546,12 +569,28 @@ const AdminProductComponent = () => {
               </WrapperLableInput>
               <WrapperLableInput>
                 <WrapperLabel>Loại sản phẩm:</WrapperLabel>
-                <InputFormComponent
-                  style={{ width: "250px" }}
-                  value={type}
-                  typeInput="TEXT"
-                  onChange={handleOnChangeType}
+                <Select
+                  name="type"
+                  defaultValue="lucy"
+                  style={{
+                    width: 250,
+                  }}
+                  onChange={handleChangeSelect}
+                  options={renderOption(allType)}
                 />
+              </WrapperLableInput>
+              <WrapperLableInput>
+                {typeSelect === "add_type" && (
+                  <>
+                    <WrapperLabel>Nhập loại SP:</WrapperLabel>
+                    <InputFormComponent
+                      style={{ width: "250px" }}
+                      value={type}
+                      typeInput="TEXT"
+                      onChange={handleOnChangeType}
+                    />
+                  </>
+                )}
               </WrapperLableInput>
             </WrapperForm>
             <WrapperFileImage>
@@ -634,12 +673,28 @@ const AdminProductComponent = () => {
               </WrapperLableInput>
               <WrapperLableInput>
                 <WrapperLabel>Loại sản phẩm:</WrapperLabel>
-                <InputFormComponent
-                  style={{ width: "250px" }}
-                  value={stateProductDetail.typeInput}
-                  typeInput="TEXT"
-                  onChange={handleOnChangeTypeDetail}
+                <Select
+                  name="type"
+                  defaultValue="lucy"
+                  style={{
+                    width: 250,
+                  }}
+                  onChange={handleChangeSelect}
+                  options={renderOption(allType)}
                 />
+              </WrapperLableInput>
+              <WrapperLableInput>
+                {typeSelect === "add_type" && (
+                  <>
+                    <WrapperLabel>Nhập loại SP:</WrapperLabel>
+                    <InputFormComponent
+                      style={{ width: "250px" }}
+                      value={type}
+                      typeInput="TEXT"
+                      onChange={handleOnChangeTypeDetail}
+                    />
+                  </>
+                )}
               </WrapperLableInput>
             </WrapperForm>
             <WrapperFileImage>
@@ -686,11 +741,7 @@ const AdminProductComponent = () => {
         onCancel={onCancelDelete}
         onOk={onOkDelete}
       >
-        <div>
-          <div>
-            <span>Bạn có muốn xóa sản phẩm ?</span>
-          </div>
-        </div>
+        <span>Bạn có muốn xóa sản phẩm ?</span>
       </Modal>
     </div>
   );

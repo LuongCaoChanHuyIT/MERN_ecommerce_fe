@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { Image, Col, InputNumber } from "antd";
-import ButtonComponent from "../ButtonComponent/ButtonComponent";
+import { Image, Col, InputNumber, Button } from "antd";
 
 export const WrapperStyleImageSmall = styled(Image)`
   height: 100px;
@@ -22,11 +21,13 @@ export const WrapperStyleTextSell = styled.span`
   color: rgb(120, 120, 120);
 `;
 export const WrapperPriceProduct = styled.div`
+  margin-top: 30px;
   background-color: rgb(250, 250, 250);
+  font-size: 2rem;
   border-radius: 4px;
 `;
 export const WrapperPriceTextProduct = styled.span`
-  font-size: 3.2rem;
+  font-size: 2.5rem;
   line-height: 40px;
   margin-right: 8px;
   font-weight: 300;
@@ -34,9 +35,11 @@ export const WrapperPriceTextProduct = styled.span`
   margin-top: 10px;
 `;
 export const WrapperAddressPriceProduct = styled.div`
+  font-size: 1.2rem;
+  margin-top: 30px;
   span.address {
     text-decoration: underline;
-    font-size: 1.5rem;
+
     line-height: 2.4rem;
     font-weight: 500;
     white-space: nowrap;
@@ -45,7 +48,7 @@ export const WrapperAddressPriceProduct = styled.div`
   }
   span.change-address {
     color: rgb(11, 116, 229);
-    font-size: 1.6rem;
+
     line-height: 24px;
     font-weight: 500;
     flex-shrink: 0;
@@ -55,30 +58,33 @@ export const WrapperQualityProduct = styled.h2``;
 export const WrapperNumberQuantity = styled(InputNumber)`
   border-radius: 0;
   display: flex;
-  width: 3rem;
-  height: 2.4rem;
+  width: 60px;
+  font-size: 1.2rem;
   border: none;
   background-color: #ccc;
   align-items: center;
 `;
-export const WrapperButtonChoose = styled(ButtonComponent)`
-  background-color: rgb(255, 57, 69) !important;
-  font-size: 2rem;
+export const WrapperButtonChoose = styled(Button)`
+  background-color: rgb(255, 57, 69);
+  color: #fff;
+  font-size: 1.6rem;
   font-weight: 300;
   width: fit-content;
   height: fit-content;
   padding: 10px 30px;
   margin-top: 30px;
-  border-radius: 5px !important;
+
+  border-radius: 0;
 `;
-export const WrapperButtonCard = styled(ButtonComponent)`
-  background-color: rgb(26, 148, 255) !important;
-  font-size: 2rem;
+export const WrapperButtonCard = styled(Button)`
+  background-color: rgb(26, 148, 255);
+  color: #fff;
+  font-size: 1.6rem;
   font-weight: 300;
   width: fit-content;
   height: fit-content;
   padding: 10px 30px;
   margin-top: 30px;
   margin-left: 10px;
-  border-radius: 5px !important;
+  border-radius: 0;
 `;

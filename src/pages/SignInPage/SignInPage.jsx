@@ -23,6 +23,7 @@ const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const mutation = useMutationHooks((data) => {
     return UserService.loginUser(data);
   });
@@ -31,6 +32,7 @@ const SignInPage = () => {
   useEffect(() => {
     if (data?.status === "OK") {
       navigate("/");
+
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token);

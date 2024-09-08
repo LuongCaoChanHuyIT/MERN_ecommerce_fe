@@ -22,3 +22,16 @@ export const getItem = (label, key, icon, children, type) => {
     type,
   };
 };
+export const renderOption = (arr) => {
+  let result = [];
+
+  result = arr?.map((opt) => {
+    return { value: opt, label: opt };
+  });
+
+  result?.push({
+    label: "Thêm type",
+    value: "add_type",
+  });
+  return result;
+};

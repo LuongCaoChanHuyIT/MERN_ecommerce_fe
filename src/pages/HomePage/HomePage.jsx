@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TypeProductComponent from "../../components/TypeProductComponent/TypeProductComponent";
 import {
   WrapperTypeProduct,
@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 import { Spin } from "antd";
 import { useDebounce } from "../../hooks/useDebounce";
 const HomePage = () => {
-  const arrType = ["TV", "Laptop"];
+  const [typeProduct, setTypeProduct] = useState([]);
   const searchProduct = useSelector((state) => state.product.search);
   const [limit, setLimit] = useState(4);
   const searchDebounce = useDebounce(searchProduct, 1000);
@@ -34,12 +34,21 @@ const HomePage = () => {
     retry: 1,
     retryDelay: 1000,
   });
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductSevice.getAllTypeProduct();
+    if (res?.status === "OK") {
+      setTypeProduct(res?.data);
+    }
+  };
+  useEffect(() => {
+    fetchAllTypeProduct();
+  }, []);
 
   return (
     <>
       <div style={{ padding: "0 120px" }}>
         <WrapperTypeProduct>
-          {arrType.map((item, i) => {
+          {typeProduct.map((item, i) => {
             return (
               <TypeProductComponent name={item} key={i}></TypeProductComponent>
             );
@@ -68,6 +77,7 @@ const HomePage = () => {
                   type={product.type}
                   discount={product.discount}
                   selled={product.selled}
+                  id={product._id}
                 ></CardComponent>
               );
             })}

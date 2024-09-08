@@ -24,6 +24,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate();
   const dispacth = useDispatch();
   const [loading, setLoading] = useState(false);
+  const order = useSelector((state) => state.order);
   // const [search, setSearch] = useState("");
   const user = useSelector((state) => state.user);
 
@@ -122,14 +123,17 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             </WrapperHeaderAccount>
           </LoadingComponent>
           {!isHiddenCart && (
-            <>
-              <Badge count={4} size="small">
+            <div
+              onClick={() => navigate("/order")}
+              style={{ cursor: "pointer" }}
+            >
+              <Badge count={order?.orderItems?.length} size="small">
                 <ShoppingCartOutlined
                   style={{ fontSize: "30px", color: "#fff" }}
                 />
               </Badge>
               <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
-            </>
+            </div>
           )}
         </Col>
       </WrapperHeader>
