@@ -10,6 +10,7 @@ import {
   WrapperDiscountText,
   WrapperStyleTextSell,
 } from "./style";
+import { convertPrice } from "../../utils";
 
 const CardComponent = (props) => {
   const {
@@ -54,7 +55,7 @@ const CardComponent = (props) => {
         <WrapperStyleTextSell>| Đã bán {selled || 1000}+ </WrapperStyleTextSell>
       </WrapperReportText>
       <WrapperPriceText>
-        {price.toLocaleString()}d
+        {convertPrice(price)} VNĐ
         <WrapperDiscountText>-{discount || 5}%</WrapperDiscountText>
       </WrapperPriceText>
     </Card>

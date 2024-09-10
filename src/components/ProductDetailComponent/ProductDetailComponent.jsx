@@ -22,6 +22,8 @@ import * as ProductService from "../../services/ProductService";
 import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { addOrderProduct } from "../../redux/slides/orderSlide";
+import { convertPrice } from "../../utils";
+import { combineSlices } from "@reduxjs/toolkit";
 const ProductDetailComponent = ({ idProduct }) => {
   const [numProduct, setNumproduct] = useState(1);
   const user = useSelector((state) => state.user);
@@ -39,7 +41,7 @@ const ProductDetailComponent = ({ idProduct }) => {
     queryFn: fetchGetDetailsProduct,
     enabled: !!idProduct,
   });
-
+  console.log(productDetatils);
   const renderStar = (num) => {
     const row = [];
     for (let i = 0; i < num; i++) {
@@ -68,6 +70,7 @@ const ProductDetailComponent = ({ idProduct }) => {
         orderItem: {
           name: productDetatils?.name,
           amount: numProduct,
+          discount: productDetatils?.discount,
           image: productDetatils?.image,
           price: productDetatils?.price,
           product: productDetatils._id,
@@ -145,7 +148,7 @@ const ProductDetailComponent = ({ idProduct }) => {
 
           <WrapperPriceProduct>
             <WrapperPriceTextProduct>
-              {productDetatils?.price}
+              {convertPrice(productDetatils?.price)}
             </WrapperPriceTextProduct>
           </WrapperPriceProduct>
           <WrapperAddressPriceProduct>

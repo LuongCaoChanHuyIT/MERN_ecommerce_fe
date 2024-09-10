@@ -26,7 +26,7 @@ export const userSlide = createSlice({
         _id = "",
         isAdmin,
       } = action.payload;
-      // console.log(action.payload);
+      console.log(action.payload);
       state.name = name;
       state.email = email;
       state.phone = phone;

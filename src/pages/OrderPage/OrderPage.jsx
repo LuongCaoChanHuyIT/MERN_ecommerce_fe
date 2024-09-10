@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Checkbox, Col, Image, InputNumber, Row } from "antd";
 import {
   WapperContentOrder,
@@ -12,24 +12,48 @@ import {
   changeAmount,
   removeOrderProduct,
   changeCheck,
+  changeCheckAll,
+  deleteProductChecked,
+  provisonalOrder,
 } from "../../redux/slides/orderSlide";
+import { convertPrice } from "../../utils";
+import UpdateInfoUser from "./UpdateInfoUser";
 const OrderPage = () => {
   const order = useSelector((state) => state.order);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
+  const handlePay = () => {
+    if (!user?.name || !user?.phone || !user?.address) {
+      console.log(user);
+      setIsOpenCreate(true);
+    } else {
+    }
+  };
   const onChange = (value, id) => {
     console.log(value, id);
     dispatch(changeAmount({ value, id }));
+    dispatch(provisonalOrder());
   };
   const handleDeleteOrder = (id) => {
-    console.log(id);
     dispatch(removeOrderProduct({ idProduct: id }));
+    dispatch(provisonalOrder());
   };
   const onChangeCheck = (e, id) => {
-    console.log(`checked = ${e.target.checked}`);
     let check = e.target.checked;
     dispatch(changeCheck({ value: check, id }));
+    dispatch(provisonalOrder());
+  };
+  const onChangeCheckAll = (e) => {
+    dispatch(changeCheckAll({ value: e.target.checked }));
+    dispatch(provisonalOrder());
+  };
+  const handleDeleteProductChecked = () => {
+    dispatch(deleteProductChecked());
+    dispatch(provisonalOrder());
   };
   console.log(order);
+
   return (
     <div
       style={{
@@ -51,7 +75,10 @@ const OrderPage = () => {
                   span={8}
                   style={{ justifyContent: "start", paddingLeft: "10px" }}
                 >
-                  <Checkbox style={{ marginRight: "10px" }}></Checkbox>
+                  <Checkbox
+                    onChange={onChangeCheckAll}
+                    style={{ marginRight: "10px" }}
+                  ></Checkbox>
                   <span>Tất cả</span>
                   <span>({order?.orderItems?.length} sản phẩm)</span>
                 </WrapperProductCol>
@@ -65,13 +92,13 @@ const OrderPage = () => {
                   <span>Thành tiền</span>
                 </WrapperProductCol>
                 <WrapperProductCol span={4}>
-                  <DeleteOutlined />
+                  <DeleteOutlined onClick={handleDeleteProductChecked} />
                 </WrapperProductCol>
               </Row>
             </WrapperTitleCol>
             <WrapperProduct>
               {order?.orderItems?.map((order) => (
-                <Row>
+                <Row key={order?.product}>
                   <WrapperProductCol
                     span={8}
                     style={{ justifyContent: "start", paddingLeft: "10px" }}
@@ -81,11 +108,13 @@ const OrderPage = () => {
                       onChange={(e) => onChangeCheck(e, order?.product)}
                       style={{ marginRight: "10px" }}
                     ></Checkbox>
-                    <Image src={order?.image} width={100} height={100} />
-                    <span>{order?.name}</span>
+                    <Image src={order?.image} style={{ width: "100px" }} />
+                    <span style={{ width: "100%", marginLeft: "20px" }}>
+                      {order?.name}
+                    </span>
                   </WrapperProductCol>
                   <WrapperProductCol span={4}>
-                    <span>{order?.price}d</span>
+                    <span>{convertPrice(order?.price)}VNĐ</span>
                   </WrapperProductCol>
                   <WrapperProductCol span={4}>
                     <InputNumber
@@ -97,7 +126,7 @@ const OrderPage = () => {
                   </WrapperProductCol>
                   <WrapperProductCol span={4}>
                     <span style={{ color: "red" }}>
-                      {order?.price * order?.amount}d
+                      {convertPrice(order?.price * order?.amount)}VNĐ
                     </span>
                   </WrapperProductCol>
                   <WrapperProductCol span={4}>
@@ -109,7 +138,7 @@ const OrderPage = () => {
               ))}
             </WrapperProduct>
           </Col>
-          <Col span={6} style={{ padding: "0 10px" }}>
+          <Col span={6}>
             <div
               style={{
                 backgroundColor: "#fff",
@@ -121,19 +150,28 @@ const OrderPage = () => {
               <div>
                 <WapperContentOrder>
                   <span>Tạm tính</span>
-                  <span style={{ fontWeight: 500 }}>0</span>
+
+                  <span style={{ fontWeight: 500 }}>
+                    {convertPrice(order?.provisionalPrice)}vnd
+                  </span>
                 </WapperContentOrder>
                 <WapperContentOrder>
                   <span>Giảm giá</span>
-                  <span style={{ fontWeight: 500 }}>0</span>
+                  <span style={{ fontWeight: 500 }}>
+                    -{convertPrice(order?.discountPrice)}vnd
+                  </span>
                 </WapperContentOrder>
                 <WapperContentOrder>
                   <span>Thuế</span>
-                  <span style={{ fontWeight: 500 }}>0</span>
+                  <span style={{ fontWeight: 500 }}>
+                    {convertPrice(order?.taxPrice)}vnd (10%)
+                  </span>
                 </WapperContentOrder>
                 <WapperContentOrder>
                   <span>Phí giao hàng</span>
-                  <span style={{ fontWeight: 500 }}>0</span>
+                  <span style={{ fontWeight: 500 }}>
+                    {convertPrice(order?.shippingPrice)}vnd
+                  </span>
                 </WapperContentOrder>
               </div>
               <div style={{ borderTop: "3px solid rgb(239, 239, 239)" }}>
@@ -146,7 +184,7 @@ const OrderPage = () => {
                       color: "#ff4d4f",
                     }}
                   >
-                    0
+                    {convertPrice(order?.totalPrice)}VNĐ
                   </span>
                 </WapperContentOrder>
               </div>
@@ -155,7 +193,7 @@ const OrderPage = () => {
               style={{
                 display: "flex",
                 justifyContent: "center",
-                marginTop: "20px",
+                marginTop: "10px",
               }}
             >
               <Button
@@ -164,7 +202,9 @@ const OrderPage = () => {
                 style={{
                   fontSize: "1.6rem",
                   padding: "25px 60px",
+                  width: "100%",
                 }}
+                onClick={handlePay}
               >
                 Mua hàng
               </Button>
@@ -172,6 +212,10 @@ const OrderPage = () => {
           </Col>
         </Row>
       </div>
+      <UpdateInfoUser
+        isOpenCreate={isOpenCreate}
+        setIsOpenCreate={setIsOpenCreate}
+      />
     </div>
   );
 };

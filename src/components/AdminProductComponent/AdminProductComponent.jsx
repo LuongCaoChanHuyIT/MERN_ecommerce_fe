@@ -427,23 +427,26 @@ const AdminProductComponent = () => {
       setTypeSelect(value);
     }
   };
+
   // ARRAY VALUE========================
   const columns = [
     {
       title: "",
       dataIndex: "image",
       render: renderImage,
+      width: "10%",
     },
     {
       title: "Name",
       dataIndex: "name",
-      // render: (text) => <a>{text}</a>,
+      width: "25%",
       sorter: (a, b) => a.name.lenght - b.name.lenght,
       ...getColumnSearchProps("name"),
     },
     {
       title: "Price",
       dataIndex: "price",
+      width: "15%",
       sorter: (a, b) => a.price - b.price,
       filters: [
         {
@@ -461,17 +464,17 @@ const AdminProductComponent = () => {
         } else {
           return record.price <= 50;
         }
-
-        // console.log(value, record)
       },
     },
     {
       title: "rating",
       dataIndex: "rating",
+      width: "10%",
     },
     {
       title: "type",
       dataIndex: "type",
+      width: "10%",
     },
     {
       title: "Action",

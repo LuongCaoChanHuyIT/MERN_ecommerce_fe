@@ -62,6 +62,7 @@ const TableUser = ({
   const renderIsAdmin = (isAdmin) => {
     return isAdmin ? "is admin" : " not is admin";
   };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const columns = [
     {
       title: "",
