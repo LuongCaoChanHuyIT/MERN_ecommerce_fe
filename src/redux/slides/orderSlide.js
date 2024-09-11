@@ -13,6 +13,7 @@ const initialState = {
   // shippingPrice: 0,
   // taxPrice: 0,
   // totalPrice: 0,
+  orderItemSelected: [],
   user: "",
   isPaid: false,
   paidAt: " ",
@@ -79,6 +80,7 @@ export const orderSlide = createSlice({
       let filteredItems = state?.orderItems?.filter((item) =>
         valuesToRemove.includes(item?.checked)
       );
+      state.orderItemSelected = filteredItems;
       filteredItems.forEach((item) => {
         total += item.amount * item.price;
         discount += (item.amount * item.price * item.discount) / 100;

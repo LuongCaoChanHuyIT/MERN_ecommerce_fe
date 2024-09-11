@@ -5,6 +5,8 @@ import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
 import { isJsonString } from "./utils";
 import { jwtDecode } from "jwt-decode";
 import * as UserService from "./services/UserService";
+import * as OrderService from "./services/OrderService";
+import * as ProductService from "./services/ProductService";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "./redux/slides/userSlide";
 
@@ -32,6 +34,41 @@ function App() {
       const { decoded } = handleDecoded();
 
       const currentTime = new Date();
+
+      if (decoded?.exp < currentTime.getTime() / 1000) {
+        const data = await UserService.refreshToken();
+        config.headers["token"] = `Beare ${data?.access_token}`;
+      }
+      return config;
+    },
+    async function (error) {
+      // Do something with request error
+      return Promise.reject(error);
+    }
+  );
+  OrderService.axiosJWT.interceptors.request.use(
+    async (config) => {
+      const { decoded } = handleDecoded();
+
+      const currentTime = new Date();
+
+      if (decoded?.exp < currentTime.getTime() / 1000) {
+        const data = await UserService.refreshToken();
+        config.headers["token"] = `Beare ${data?.access_token}`;
+      }
+      return config;
+    },
+    async function (error) {
+      // Do something with request error
+      return Promise.reject(error);
+    }
+  );
+  ProductService.axiosJWT.interceptors.request.use(
+    async (config) => {
+      const { decoded } = handleDecoded();
+
+      const currentTime = new Date();
+
       if (decoded?.exp < currentTime.getTime() / 1000) {
         const data = await UserService.refreshToken();
         config.headers["token"] = `Beare ${data?.access_token}`;

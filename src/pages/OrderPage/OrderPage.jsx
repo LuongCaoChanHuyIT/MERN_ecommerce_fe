@@ -18,16 +18,19 @@ import {
 } from "../../redux/slides/orderSlide";
 import { convertPrice } from "../../utils";
 import UpdateInfoUser from "./UpdateInfoUser";
+import { useNavigate } from "react-router-dom";
 const OrderPage = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isOpenCreate, setIsOpenCreate] = useState(false);
   const handlePay = () => {
     if (!user?.name || !user?.phone || !user?.address) {
       console.log(user);
       setIsOpenCreate(true);
     } else {
+      navigate("/payment");
     }
   };
   const onChange = (value, id) => {
@@ -143,7 +146,6 @@ const OrderPage = () => {
               style={{
                 backgroundColor: "#fff",
                 width: "100%",
-                height: "200px",
                 borderRadius: "4px",
               }}
             >
