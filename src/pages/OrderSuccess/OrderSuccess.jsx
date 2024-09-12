@@ -1,40 +1,16 @@
-import React, { useState } from "react";
-import { Button, Col, Radio, Row, Space } from "antd";
+import React from "react";
+import { Col, Image, InputNumber, Row } from "antd";
 import { WapperContentOrder } from "./style";
 import { convertPrice } from "../../utils";
 import { useSelector } from "react-redux";
 import { WrapperMethod } from "./style";
-import { WrapperIconCheckRadio } from "./style";
-import { useMutationHooks } from "../../hooks/useMutationHooks";
-import { createOrder } from "../../services/OrderService";
-const PaymentPage = () => {
+import { WrapperProductCol } from "./style";
+import { WrapperProduct } from "./style";
+
+const OrderSuccess = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
-  const [value, setValue] = useState(1);
-  const mutation = useMutationHooks((data) => {
-    return createOrder(user?.access_token, data);
-  });
-  console.log(order);
-  const { data } = mutation;
-  console.log(data);
-  const handlePay = () => {
-    mutation.mutate({
-      orderItems: order?.orderItemSelected,
-      fullname: user?.name,
-      address: user?.address,
-      phone: user?.phone,
-      paymentMethod: "payment",
-      itemsPrice: order?.provisionalPrice,
-      shippingPrice: order?.shippingPrice,
-      totalPrice: order?.totalPrice,
-      user: user?.id,
-      taxPrice: order?.taxPrice,
-    });
-  };
-  const onChange = (e) => {
-    console.log("radio checked", e.target.value);
-    setValue(e.target.value);
-  };
+
   console.log(order, user);
   return (
     <div
@@ -47,7 +23,7 @@ const PaymentPage = () => {
         <span
           style={{ fontSize: "1.4rem", fontWeight: 500, marginTop: "10px" }}
         >
-          Thanh toán
+          Đơn hàng đặt thành công
         </span>
         <Row style={{ paddingTop: "20px" }}>
           <Col span={18} style={{ padding: "0 10px", boxSizing: "border-box" }}>
@@ -67,16 +43,7 @@ const PaymentPage = () => {
                       "linear-gradient(136deg,#eff8ff -85%,#f5faff -1%)",
                   }}
                 >
-                  <Radio.Group onChange={onChange} value={value}>
-                    <Space direction="vertical">
-                      <WrapperIconCheckRadio value={1}>
-                        <span>FAST</span> Giao hàng nhanh
-                      </WrapperIconCheckRadio>
-                      <WrapperIconCheckRadio value={2}>
-                        <span>GOJEK</span> Giao hàng nhanh{" "}
-                      </WrapperIconCheckRadio>
-                    </Space>
-                  </Radio.Group>
+                  <span>FAST</span> Giao hàng nhanh
                 </div>
               </div>
             </WrapperMethod>{" "}
@@ -96,15 +63,36 @@ const PaymentPage = () => {
                       "linear-gradient(136deg,#eff8ff -85%,#f5faff -1%)",
                   }}
                 >
-                  <Radio.Group onChange={onChange} value={value}>
-                    <Space direction="vertical">
-                      <WrapperIconCheckRadio value={1}>
-                        Thanh toán bằng<span>tiền mặt</span>
-                      </WrapperIconCheckRadio>
-                    </Space>
-                  </Radio.Group>
+                  Thanh toán bằng<span> tiền mặt</span>
                 </div>
               </div>
+              <WrapperProduct>
+                {order?.orderItems?.map((order) => (
+                  <Row key={order?.product}>
+                    <WrapperProductCol
+                      span={8}
+                      style={{ justifyContent: "start", paddingLeft: "10px" }}
+                    >
+                      <Image src={order?.image} style={{ width: "100px" }} />
+                      <span style={{ width: "100%", marginLeft: "20px" }}>
+                        {order?.name}
+                      </span>
+                    </WrapperProductCol>
+                    <WrapperProductCol span={4}>
+                      <span>{convertPrice(order?.price)}VNĐ</span>
+                    </WrapperProductCol>
+                    <WrapperProductCol span={4}>
+                      <span>Số lượng: {order?.amount}</span>
+                    </WrapperProductCol>
+                    <WrapperProductCol span={4}>
+                      <span style={{ color: "red" }}>
+                        {convertPrice(order?.price * order?.amount)}
+                        VNĐ
+                      </span>
+                    </WrapperProductCol>
+                  </Row>
+                ))}
+              </WrapperProduct>
             </WrapperMethod>
           </Col>
           <Col span={6}>
@@ -128,16 +116,6 @@ const PaymentPage = () => {
 
                   <span style={{ fontWeight: 500, width: "100%" }}>
                     {user?.address}{" "}
-                    <span
-                      style={{
-                        cursor: "pointer",
-                        whiteSpace: "nowrap",
-                        fontSize: "0.9rem",
-                        color: "blue",
-                      }}
-                    >
-                      Thay đổi
-                    </span>
                   </span>
                 </WapperContentOrder>
                 <WapperContentOrder>
@@ -181,26 +159,6 @@ const PaymentPage = () => {
                 </WapperContentOrder>
               </div>
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "10px",
-              }}
-            >
-              <Button
-                type="primary"
-                danger
-                style={{
-                  fontSize: "1.6rem",
-                  padding: "25px 60px",
-                  width: "100%",
-                }}
-                onClick={handlePay}
-              >
-                Mua hàng
-              </Button>
-            </div>
           </Col>
         </Row>
       </div>
@@ -208,4 +166,4 @@ const PaymentPage = () => {
   );
 };
 
-export default PaymentPage;
+export default OrderSuccess;
