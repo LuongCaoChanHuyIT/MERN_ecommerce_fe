@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 export const isJsonString = (data) => {
   try {
     JSON.parse(data);
@@ -42,4 +43,14 @@ export const convertPrice = (price) => {
   } catch (error) {
     return null;
   }
+};
+
+export const handleDecoded = () => {
+  let storageData = localStorage.getItem("access_token");
+  let decoded = {};
+  if (storageData && isJsonString(storageData)) {
+    storageData = JSON.parse(storageData);
+    decoded = jwtDecode(storageData);
+  }
+  return { decoded, storageData };
 };

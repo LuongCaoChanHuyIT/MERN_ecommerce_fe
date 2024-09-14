@@ -17,7 +17,6 @@ const AdminPage = () => {
         return <AdminUserComponent></AdminUserComponent>;
       case "product":
         return <AdminProductComponent></AdminProductComponent>;
-
       default:
         return <></>;
     }

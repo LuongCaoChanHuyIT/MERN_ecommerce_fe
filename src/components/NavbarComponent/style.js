@@ -4,6 +4,8 @@ export const WrapperLabelText = styled.h4`
   color: rgb(56, 56, 61);
   font-size: 1.6rem;
   font-weight: 500;
+  margin-bottom: 20px;
+  margin-top: 10px;
 `;
 export const WrapperTextValue = styled.span`
   color: rgb(56, 56, 61);
@@ -22,4 +24,5 @@ export const WapprerTextPrice = styled.div`
   width: fit-content;
   padding: 5px;
   font-size: 1.6rem;
+  cursor: pointer;
 `;

@@ -3,18 +3,26 @@ export const axiosJWT = axios.create();
 export const getAllProduct = async (search, limit) => {
   let res = {};
   if (!search) {
-    // console.log("co");
     res = await axiosJWT.get(
       `${process.env.REACT_APP_API_URL}/product/getAll?limit=${limit}`
     );
-  } else {
+  } else if (limit) {
     res = await axiosJWT.get(
       `${process.env.REACT_APP_API_URL}/product/getAll?filter=name&filter=${search}&limit=${limit}`
     );
-    // console.log("ko");
   }
-
   return res.data;
+};
+export const getProductOption = async (type, option, page, limit) => {
+  let res = {};
+  // console.log(option);
+  if (type) {
+    res = await axiosJWT.get(
+      `${process.env.REACT_APP_API_URL}/product/get-product-option?filter=type&filter=${type}&page=${page}&limit=${limit}&rankValue=${option}`
+    );
+    return res.data;
+  }
+  return res;
 };
 export const getProductType = async (type, page, limit) => {
   if (type) {
@@ -58,6 +66,18 @@ export const deleteProduct = async (id) => {
 export const getAllTypeProduct = async () => {
   const res = await axios.get(
     `${process.env.REACT_APP_API_URL}/product/get-all-type`
+  );
+  return res.data;
+};
+export const deleteProductMany = async (ids, access_token) => {
+  const res = await axiosJWT.post(
+    `${process.env.REACT_APP_API_URL}/product/delete-many`,
+    ids,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
   );
   return res.data;
 };

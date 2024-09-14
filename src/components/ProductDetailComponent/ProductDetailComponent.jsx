@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { Col, Image, Row, Spin } from "antd";
 import { MinusOutlined, PlusOutlined, StarFilled } from "@ant-design/icons";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
-import imageProductSmall1 from "../../assets/images/product1_small.png";
-import imageProductSmall2 from "../../assets/images/prodcut1_small2.png";
-import imageProductSmall3 from "../../assets/images/product1_small3.png";
+
 import {
   WrapperStyleImageSmall,
   WrapperStyleColImage,
@@ -21,13 +19,15 @@ import {
 import * as ProductService from "../../services/ProductService";
 import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { addOrderProduct } from "../../redux/slides/orderSlide";
+import {
+  addOrderProduct,
+  provisonalOrder,
+} from "../../redux/slides/orderSlide";
 import { convertPrice } from "../../utils";
-import { combineSlices } from "@reduxjs/toolkit";
+import defaultImage from "../../assets/images/account.png";
 const ProductDetailComponent = ({ idProduct }) => {
   const [numProduct, setNumproduct] = useState(1);
   const user = useSelector((state) => state.user);
-
   const dispatch = useDispatch();
   const onChange = (value) => {
     setNumproduct(Number(value));
@@ -41,7 +41,6 @@ const ProductDetailComponent = ({ idProduct }) => {
     queryFn: fetchGetDetailsProduct,
     enabled: !!idProduct,
   });
-  console.log(productDetatils);
   const renderStar = (num) => {
     const row = [];
     for (let i = 0; i < num; i++) {
@@ -64,7 +63,7 @@ const ProductDetailComponent = ({ idProduct }) => {
     // if (!user?.id) {
     //   navigate("/sign-in", { state: location?.pathname });
     // } else {
-
+    dispatch(provisonalOrder());
     dispatch(
       addOrderProduct({
         orderItem: {
@@ -85,7 +84,7 @@ const ProductDetailComponent = ({ idProduct }) => {
       <Row
         style={{ padding: "16px", display: "flex", backgroundColor: "#fff" }}
       >
-        <Col span={10}>
+        <Col span={10} style={{ paddingRight: "10px" }}>
           <Image
             src={productDetatils?.image}
             preview={false}
@@ -94,42 +93,42 @@ const ProductDetailComponent = ({ idProduct }) => {
           <Row style={{ paddingTop: "10px", justifyContent: "space-between" }}>
             <WrapperStyleColImage span={4}>
               <WrapperStyleImageSmall
-                src={imageProductSmall1}
+                src={defaultImage}
                 preview={false}
                 alt="image product"
               ></WrapperStyleImageSmall>
             </WrapperStyleColImage>
             <WrapperStyleColImage span={4}>
               <WrapperStyleImageSmall
-                src={imageProductSmall2}
+                src={defaultImage}
                 preview={false}
                 alt="image product"
               ></WrapperStyleImageSmall>
             </WrapperStyleColImage>
             <WrapperStyleColImage span={4}>
               <WrapperStyleImageSmall
-                src={imageProductSmall3}
+                src={defaultImage}
                 preview={false}
                 alt="image product"
               ></WrapperStyleImageSmall>
             </WrapperStyleColImage>
             <WrapperStyleColImage span={4}>
               <WrapperStyleImageSmall
-                src={imageProductSmall1}
+                src={defaultImage}
                 preview={false}
                 alt="image product"
               ></WrapperStyleImageSmall>
             </WrapperStyleColImage>
             <WrapperStyleColImage span={4}>
               <WrapperStyleImageSmall
-                src={imageProductSmall2}
+                src={defaultImage}
                 preview={false}
                 alt="image product"
               ></WrapperStyleImageSmall>
             </WrapperStyleColImage>
             <WrapperStyleColImage span={4}>
               <WrapperStyleImageSmall
-                src={imageProductSmall3}
+                src={defaultImage}
                 preview={false}
                 alt="image product"
               ></WrapperStyleImageSmall>
@@ -142,10 +141,8 @@ const ProductDetailComponent = ({ idProduct }) => {
           </WrapperStyleNameProduct>
           <div>
             {renderStar(productDetatils?.rating)}
-
             <WrapperStyleTextSell> | Đã bán 1000+ </WrapperStyleTextSell>
           </div>
-
           <WrapperPriceProduct>
             <WrapperPriceTextProduct>
               {convertPrice(productDetatils?.price)}

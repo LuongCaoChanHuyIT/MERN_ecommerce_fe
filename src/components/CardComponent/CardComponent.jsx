@@ -24,20 +24,25 @@ const CardComponent = (props) => {
     selled = "",
     discount = "",
     id = "",
+    disabled = false,
   } = props;
   const navigate = useNavigate();
   const handleDetailProduct = (id) => {
     navigate(`/product-detail/${id}`);
   };
+
   return (
     <Card
       hoverable
       style={{
-        width: 240,
-        padding: "10px",
+        width: "100%",
+        height: "100%",
+        padding: "8px",
         borderRadius: "4px",
+        backgroundColor: `${countInStock === 0 && "#f0f0f0"}`,
+        cursor: `${countInStock === 0 && "not-allowed"}`,
       }}
-      onClick={() => handleDetailProduct(id)}
+      onClick={() => countInStock !== 0 && handleDetailProduct(id)}
       cover={<img alt="example" src={image} height={200} />}
     >
       <StyleNameProduct>{name}</StyleNameProduct>

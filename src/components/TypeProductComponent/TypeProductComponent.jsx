@@ -11,6 +11,7 @@ const TypeProductComponent = ({ name }) => {
         ?.replace(/ /g, "_")}`,
       { state: type }
     );
+    // navigate(`/product/${type}`);
   };
   return (
     <div

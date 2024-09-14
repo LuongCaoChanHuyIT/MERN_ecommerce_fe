@@ -5,6 +5,10 @@ export const StyleNameProduct = styled.div`
   /* font-size: 1.2rem !important; */
   line-height: 1.6rem;
   color: rgb(56, 56, 61);
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  display: -webkit-box;
 `;
 export const WrapperReportText = styled.div`
   /* font-size: 1rem; */

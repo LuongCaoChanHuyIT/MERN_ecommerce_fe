@@ -59,7 +59,7 @@ const Create = ({ isOpenCreate, setIsOpenCreate, dataUserRefetch }) => {
   });
   const { data, isPending } = mutation;
   useEffect(() => {
-    if (data?.status === "OK") {
+    if (data?.status === "SUCCESS") {
       dataUserRefetch();
       setIsOpenCreate(false);
       message.success("Thêm người dùng thành công!");
@@ -84,7 +84,7 @@ const Create = ({ isOpenCreate, setIsOpenCreate, dataUserRefetch }) => {
   };
   return (
     <Modal
-      title="Tạo sản phẩm"
+      title="Tạo người dùng"
       width={700}
       open={isOpenCreate}
       onOk={handleOk}
@@ -94,7 +94,7 @@ const Create = ({ isOpenCreate, setIsOpenCreate, dataUserRefetch }) => {
         <WrapperContent>
           <WrapperForm>
             <WrapperLableInput>
-              <WrapperLabel>Tên sản phẩm:</WrapperLabel>
+              <WrapperLabel>Tên người dùng:</WrapperLabel>
               <InputFormComponent
                 placeholder="Tên người dùng"
                 style={{ width: "250px" }}

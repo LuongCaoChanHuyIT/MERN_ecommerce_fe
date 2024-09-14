@@ -1,22 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Radio, Row, Space } from "antd";
 import { WapperContentOrder } from "./style";
 import { convertPrice } from "../../utils";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { WrapperMethod } from "./style";
 import { WrapperIconCheckRadio } from "./style";
 import { useMutationHooks } from "../../hooks/useMutationHooks";
 import { createOrder } from "../../services/OrderService";
+import { useNavigate } from "react-router-dom";
+import { deleteProductChecked } from "../../redux/slides/orderSlide";
 const PaymentPage = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [value, setValue] = useState(1);
   const mutation = useMutationHooks((data) => {
     return createOrder(user?.access_token, data);
   });
-  console.log(order);
+
   const { data } = mutation;
-  console.log(data);
+  useEffect(() => {
+    if (data?.status === "SUCCESS") {
+      navigate("/order-success");
+      dispatch(deleteProductChecked());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.status]);
   const handlePay = () => {
     mutation.mutate({
       orderItems: order?.orderItemSelected,
@@ -32,10 +42,9 @@ const PaymentPage = () => {
     });
   };
   const onChange = (e) => {
-    console.log("radio checked", e.target.value);
     setValue(e.target.value);
   };
-  console.log(order, user);
+
   return (
     <div
       style={{

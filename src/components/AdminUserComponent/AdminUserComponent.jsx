@@ -16,10 +16,8 @@ const AdminUserComponent = () => {
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const handleDeleteUser = () => {
     setIsOpenDelete(true);
-    // console.log("ok");
   };
   const handleDetailUser = () => {
-    // console.log(rowSelected);
     setIsOpenUpdate(true);
   };
   const handleCreateUser = () => {

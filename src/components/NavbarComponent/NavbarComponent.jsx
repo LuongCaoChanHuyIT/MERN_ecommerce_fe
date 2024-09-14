@@ -1,12 +1,12 @@
-import React from "react";
-import {
-  WrapperContent,
-  WrapperLabelText,
-  WrapperTextValue,
-  WapprerTextPrice,
-} from "./style";
+import React, { useEffect, useState } from "react";
+import { WrapperContent, WrapperLabelText, WapprerTextPrice } from "./style";
 import { Checkbox, Rate } from "antd";
-function NavbarComponent() {
+import * as ProductSevice from "../../services/ProductService";
+import TypeProductComponent from "../TypeProductComponent/TypeProductComponent";
+
+function NavbarComponent({ handleGetForPrice }) {
+  const [typeProduct, setTypeProduct] = useState([]);
+
   const onChange = (checkedValues) => {
     console.log("checked = ", checkedValues);
   };
@@ -14,7 +14,11 @@ function NavbarComponent() {
     switch (type) {
       case "text":
         return options.map((option, i) => {
-          return <WrapperTextValue key={i}>{option}</WrapperTextValue>;
+          return (
+            <TypeProductComponent name={option} key={i}>
+              {option}
+            </TypeProductComponent>
+          );
         });
       case "checkbox":
         return (
@@ -56,18 +60,34 @@ function NavbarComponent() {
         });
       case "price":
         return options.map((option, i) => {
-          return <WapprerTextPrice key={i}>{option}</WapprerTextPrice>;
+          return (
+            <WapprerTextPrice key={i} onClick={() => handleGetForPrice(option)}>
+              {option}
+            </WapprerTextPrice>
+          );
         });
       default:
         return {};
     }
   };
+
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductSevice.getAllTypeProduct();
+    if (res?.status === "SUCCESS") {
+      setTypeProduct(res?.data);
+    }
+  };
+  useEffect(() => {
+    fetchAllTypeProduct();
+  }, []);
   return (
     <div>
-      <WrapperLabelText>Label</WrapperLabelText>
+      <WrapperLabelText>Loại sản phẩm</WrapperLabelText>
+      <WrapperContent>{renderContent("text", typeProduct)}</WrapperContent>
+      <WrapperLabelText>Giá tiền</WrapperLabelText>
       <WrapperContent>
-        {renderContent("text", ["Tu lanh", "TV", "Laptop"])}
-      </WrapperContent>{" "}
+        {renderContent("price", ["<100.000", "100.000 - 300.000", ">300.000"])}
+      </WrapperContent>
     </div>
   );
 }

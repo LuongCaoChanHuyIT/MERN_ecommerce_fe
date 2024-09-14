@@ -15,8 +15,9 @@ import { useMutationHooks } from "../../hooks/useMutationHooks";
 import LoadingComponent from "../../components/LoadingComponent/LoadingComponent";
 import { UploadOutlined } from "@ant-design/icons";
 import { updateUser } from "../../redux/slides/userSlide";
-import { Button, Image, message } from "antd";
+import { Button, Col, Image, message, Row } from "antd";
 import { getBase64 } from "../../utils";
+
 const ProfilePage = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -28,9 +29,7 @@ const ProfilePage = () => {
   const mutation = useMutationHooks((data) => {
     return UserService.updateUser(data.id, data.data, data.access_token);
   });
-
   const { data, isPending } = mutation;
-  // console.log(data);
   const handleOnChangeEmail = (value) => {
     setEmail(value);
   };
@@ -50,7 +49,6 @@ const ProfilePage = () => {
     }
     setAvatar(file.preview);
   };
-
   const handleUpdate = () => {
     let data = { email, name, phone, address, avatar };
     let id = user?.id;
@@ -64,8 +62,9 @@ const ProfilePage = () => {
     setAddress(user?.address);
     setAvatar(user?.avatar);
   }, [user]);
+
   useEffect(() => {
-    if (data?.status === "OK") {
+    if (data?.status === "SUCCESS") {
       handleGetDetailUser(user?.id, user?.access_token);
       message.success("Cập nhật thành công!");
     }
@@ -78,93 +77,108 @@ const ProfilePage = () => {
     <div style={{ width: "1270px", margin: "auto", height: "500px" }}>
       <WrapperHeader>Thông tin người dùng</WrapperHeader>
       <LoadingComponent isLoading={isPending}>
-        <WrapperContentProfile>
-          <WrapperInput>
-            <WrapperLabel>Name:</WrapperLabel>
-            <InputFormComponent
-              style={{ width: "300px" }}
-              value={name}
-              typeInput="TEXT"
-              onChange={handleOnChangeName}
-            />
-            <ButtonComponent
-              size={"lagre"}
-              textButton={"Cập nhật"}
-              onClick={handleUpdate}
-              width="fit-content"
-            ></ButtonComponent>
-          </WrapperInput>
-          <WrapperInput>
-            <WrapperLabel>Email:</WrapperLabel>
-            <InputFormComponent
-              style={{ width: "300px" }}
-              value={email}
-              typeInput="TEXT"
-              onChange={handleOnChangeEmail}
-            />
-            <ButtonComponent
-              size={"lagre"}
-              textButton={"Cập nhật"}
-              onClick={handleUpdate}
-              width="fit-content"
-            ></ButtonComponent>
-          </WrapperInput>
-          <WrapperInput>
-            <WrapperLabel>Phone:</WrapperLabel>
-            <InputFormComponent
-              style={{ width: "300px" }}
-              value={phone}
-              typeInput="TEXT"
-              onChange={handleOnChangePhone}
-            />
-            <ButtonComponent
-              size={"lagre"}
-              textButton={"Cập nhật"}
-              onClick={handleUpdate}
-              width="fit-content"
-            ></ButtonComponent>
-          </WrapperInput>
-          <WrapperInput>
-            <WrapperLabel>Address:</WrapperLabel>
-            <InputFormComponent
-              style={{ width: "300px" }}
-              value={address}
-              typeInput="TEXT"
-              onChange={handleOnChangeAddress}
-            />
-            <ButtonComponent
-              size={"lagre"}
-              textButton={"Cập nhật"}
-              onClick={handleUpdate}
-              width="fit-content"
-            ></ButtonComponent>
-          </WrapperInput>
-          <WrapperInput>
-            <WrapperLabel>Avatar:</WrapperLabel>
-            <WrapperUploadFile onChange={handleOnChangeAvatar} maxCount={1}>
-              <Button icon={<UploadOutlined />}>Upload</Button>
-            </WrapperUploadFile>
-            {avatar && (
-              <Image
-                src={avatar}
-                style={{
-                  height: "60px",
-                  width: "60px",
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                }}
-                alt="avatar"
-              />
-            )}
+        <Row>
+          <Col span={12}>
+            <WrapperContentProfile>
+              <WrapperInput>
+                <WrapperLabel>Name:</WrapperLabel>
+                <InputFormComponent
+                  style={{ width: "300px" }}
+                  value={name}
+                  typeInput="TEXT"
+                  onChange={handleOnChangeName}
+                />
+                <ButtonComponent
+                  size={"lagre"}
+                  textButton={"Cập nhật"}
+                  onClick={handleUpdate}
+                  width="fit-content"
+                ></ButtonComponent>
+              </WrapperInput>
+              <WrapperInput>
+                <WrapperLabel>Email:</WrapperLabel>
+                <InputFormComponent
+                  style={{ width: "300px" }}
+                  value={email}
+                  typeInput="TEXT"
+                  onChange={handleOnChangeEmail}
+                />
+                <ButtonComponent
+                  size={"lagre"}
+                  textButton={"Cập nhật"}
+                  onClick={handleUpdate}
+                  width="fit-content"
+                ></ButtonComponent>
+              </WrapperInput>
+              <WrapperInput>
+                <WrapperLabel>Phone:</WrapperLabel>
+                <InputFormComponent
+                  style={{ width: "300px" }}
+                  value={phone}
+                  typeInput="TEXT"
+                  onChange={handleOnChangePhone}
+                />
+                <ButtonComponent
+                  size={"lagre"}
+                  textButton={"Cập nhật"}
+                  onClick={handleUpdate}
+                  width="fit-content"
+                ></ButtonComponent>
+              </WrapperInput>
+              <WrapperInput>
+                <WrapperLabel>Address:</WrapperLabel>
+                <InputFormComponent
+                  style={{ width: "300px" }}
+                  value={address}
+                  typeInput="TEXT"
+                  onChange={handleOnChangeAddress}
+                />
+                <ButtonComponent
+                  size={"lagre"}
+                  textButton={"Cập nhật"}
+                  onClick={handleUpdate}
+                  width="fit-content"
+                ></ButtonComponent>
+              </WrapperInput>
+            </WrapperContentProfile>
+          </Col>
+          <Col span={12}>
+            <WrapperContentProfile>
+              <WrapperInput>
+                <div style={{ position: "absolute", top: 0, left: 0 }}>
+                  <WrapperLabel>Avatar:</WrapperLabel>
+                  <WrapperUploadFile
+                    onChange={handleOnChangeAvatar}
+                    maxCount={1}
+                  >
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                  </WrapperUploadFile>
+                </div>
 
-            <ButtonComponent
-              size={"lagre"}
-              textButton={"Cập nhật"}
-              onClick={handleUpdate}
-              width="fit-content"
-            ></ButtonComponent>
-          </WrapperInput>
-        </WrapperContentProfile>
+                {avatar && (
+                  <Image
+                    src={avatar}
+                    style={{
+                      width: "188px",
+                      borderRadius: "10px",
+                      objectFit: "cover",
+                      marginLeft: "100px",
+                    }}
+                    alt="avatar"
+                    preview={false}
+                  />
+                )}
+
+                <ButtonComponent
+                  size={"lagre"}
+                  textButton={"Cập nhật"}
+                  onClick={handleUpdate}
+                  width="fit-content"
+                ></ButtonComponent>
+              </WrapperInput>
+            </WrapperContentProfile>
+          </Col>
+        </Row>
       </LoadingComponent>
     </div>
   );

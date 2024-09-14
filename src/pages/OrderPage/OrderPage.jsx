@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Col, Image, InputNumber, Row } from "antd";
+import { Button, Checkbox, Col, Image, InputNumber, message, Row } from "antd";
 import {
   WapperContentOrder,
   WrapperProduct,
@@ -26,15 +26,17 @@ const OrderPage = () => {
   const navigate = useNavigate();
   const [isOpenCreate, setIsOpenCreate] = useState(false);
   const handlePay = () => {
-    if (!user?.name || !user?.phone || !user?.address) {
-      console.log(user);
-      setIsOpenCreate(true);
+    if (order?.orderItemSelected.length > 0) {
+      if (!user?.name || !user?.phone || !user?.address) {
+        setIsOpenCreate(true);
+      } else {
+        navigate("/payment");
+      }
     } else {
-      navigate("/payment");
+      message.error("Bạn chưa chọn sản phẩm nào");
     }
   };
   const onChange = (value, id) => {
-    console.log(value, id);
     dispatch(changeAmount({ value, id }));
     dispatch(provisonalOrder());
   };
@@ -55,7 +57,6 @@ const OrderPage = () => {
     dispatch(deleteProductChecked());
     dispatch(provisonalOrder());
   };
-  console.log(order);
 
   return (
     <div

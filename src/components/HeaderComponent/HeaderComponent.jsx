@@ -20,20 +20,21 @@ import * as UserService from "../../services/UserService";
 import { resetUser } from "../../redux/slides/userSlide";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 import { searchProduct } from "../../redux/slides/productSlide";
+import { provisonalOrder } from "../../redux/slides/orderSlide";
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate();
   const dispacth = useDispatch();
   const [loading, setLoading] = useState(false);
   const order = useSelector((state) => state.order);
-  // const [search, setSearch] = useState("");
   const user = useSelector((state) => state.user);
-
+  const dispatch = useDispatch();
   const handleNavigateLogin = () => {
     navigate("/sign-in");
   };
   const handleLogout = async () => {
     setLoading(true);
     await UserService.logoutUser();
+    localStorage.removeItem("access_token");
     dispacth(resetUser());
     setLoading(false);
   };
@@ -53,16 +54,19 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     </div>
   );
   const onSearch = (e) => {
-    // setSearch(e.target.value);
     dispacth(searchProduct(e.target.value));
+  };
+  const handleHome = () => {
+    navigate("/");
   };
   return (
     <div>
       <WrapperHeader gutter={20}>
         <Col span={6}>
-          <WrapperTextHeader>ECOMMERCE</WrapperTextHeader>
+          <WrapperTextHeader style={{ cursor: "pointer" }} onClick={handleHome}>
+            ECOMMERCE
+          </WrapperTextHeader>
         </Col>
-
         <Col span={12}>
           {!isHiddenSearch && (
             <ButtonInputSearch
@@ -124,7 +128,10 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           </LoadingComponent>
           {!isHiddenCart && (
             <div
-              onClick={() => navigate("/order")}
+              onClick={() => {
+                navigate("/order");
+                dispatch(provisonalOrder());
+              }}
               style={{ cursor: "pointer" }}
             >
               <Badge count={order?.orderItems?.length} size="small">

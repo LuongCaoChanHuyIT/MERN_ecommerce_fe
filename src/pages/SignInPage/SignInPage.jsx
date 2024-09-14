@@ -30,9 +30,8 @@ const SignInPage = () => {
 
   const { data, isPending } = mutation;
   useEffect(() => {
-    if (data?.status === "OK") {
+    if (data?.status === "SUCCESS") {
       navigate("/");
-
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token);

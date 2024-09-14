@@ -26,6 +26,8 @@ export const WrapperLabel = styled.label`
 export const WrapperInput = styled.div`
   display: flex;
   align-items: center;
+  position: relative;
+  justify-content: center;
   gap: 20px;
 `;
 export const WrapperUploadFile = styled(Upload)`

@@ -25,7 +25,6 @@ const Update = ({
   dataUserRefetch,
   rowSelected,
 }) => {
-  const user = useSelector((state) => state.user);
   // Set states and on change START============================
   const [name, setName] = useState();
   const [email, setEmail] = useState();
@@ -62,17 +61,11 @@ const Update = ({
     }
   };
   // Set states and on change END=============================
+  const user = useSelector((state) => state.user);
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    if (rowSelected) {
-      setIsLoading(true);
-      fetchDetailUser(rowSelected);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rowSelected]);
+
   const fetchDetailUser = async (rowSelected) => {
     const res = await getDetailUser(rowSelected, user?.access_token);
-
     if (res?.data) {
       setName(res?.data.name);
       setEmail(res?.data.email);
@@ -81,26 +74,31 @@ const Update = ({
       setAvatar(res?.data.avatar);
       setIsLoading(false);
     }
-    // console.log(user?.access_token);
   };
-
   const mutation = useMutationHooks((data) => {
     return updateUser(rowSelected, data, user?.access_token);
   });
   const { data, isPending } = mutation;
-  useEffect(() => {
-    dataUserRefetch();
-    if (data?.status === "OK") {
-      message.success("Cập nhật người dùng thành công!");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.status]);
   const onClose = () => {
     setIsOpenUpdate(false);
   };
   const handleUpdateUser = () => {
     mutation.mutate({ name, email, phone, address, avatar });
   };
+  useEffect(() => {
+    dataUserRefetch();
+    if (data?.status === "SUCCESS") {
+      message.success("Cập nhật người dùng thành công!");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.status]);
+  useEffect(() => {
+    if (rowSelected) {
+      setIsLoading(true);
+      fetchDetailUser(rowSelected);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowSelected]);
   return (
     <Drawer
       title="Chi tiết người dùng"

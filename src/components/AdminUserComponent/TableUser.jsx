@@ -66,7 +66,7 @@ const TableUser = ({
   const columns = [
     {
       title: "",
-      dataIndex: "Avatar",
+      dataIndex: "avatar",
       render: renderAvatar,
     },
     {
@@ -101,10 +101,11 @@ const TableUser = ({
   const [isLoadingDeleteMany, setIsLoadingDeleteMany] = useState(false);
   const [listCheck, setListCheck] = useState([]);
   const newColumnExport = useMemo(() => {
+    // eslint-disable-next-line array-callback-return
     const filter = columns.filter((col) => {
       if (
         col.dataIndex !== "Action" &&
-        col.dataIndex !== "Avatar" &&
+        col.dataIndex !== "avatar" &&
         col.dataIndex !== ""
       ) {
         return col;
@@ -112,8 +113,6 @@ const TableUser = ({
     });
     return filter;
   }, [columns]);
-
-  // console.log(newColumnExport);
   const mutationDeleteMany = useMutationHooks((list) => {
     return deleteUserMany(list, user?.access_token);
   });
@@ -125,19 +124,14 @@ const TableUser = ({
     onChange: (selectedRowKeys) => {
       setListCheck(selectedRowKeys);
     },
-    // getCheckboxProps: (record) => ({
-    //   disabled: record.name === "Disabled User",
-    //   // Column configuration not to be checked
-    //   name: record.name,
-    // }),
   };
   useEffect(() => {
-    if (data?.status === "OK") {
+    if (data?.status === "SUCCESS") {
       message.success("Xóa các user thành công!");
       dataUserRefetch();
       setIsLoadingDeleteMany(false);
       setIsOpenDeleteMany(false);
-    } else if (data?.status === "ERROR") {
+    } else if (data?.status === "ERR") {
       message.error("Chưa chọn user nào để xóa!");
       setIsLoadingDeleteMany(false);
       setIsOpenDeleteMany(false);
@@ -174,7 +168,6 @@ const TableUser = ({
       label: <div onClick={exportExcel}>Export excel</div>,
     },
   ];
-
   //==========================================================================//
   return (
     <>
@@ -192,7 +185,6 @@ const TableUser = ({
           </span>
         </Dropdown>
       </div>
-
       <WrapperButtonTable>
         <ButtonComponent
           size={"medium"}

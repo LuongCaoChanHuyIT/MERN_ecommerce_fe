@@ -1,12 +1,20 @@
 import React from "react";
 import ProductDetailComponent from "../../components/ProductDetailComponent/ProductDetailComponent";
 import { useNavigate, useParams } from "react-router-dom";
+
 const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   return (
-    <div style={{ padding: "0 120px", backgroundColor: "#efefef" }}>
-      <h4>
+    <div
+      style={{
+        padding: "0 120px",
+        backgroundColor: "#efefef",
+        fontSize: "1.2rem",
+        height: "100vh",
+      }}
+    >
+      <h4 style={{ marginTop: 0 }}>
         <span
           style={{ cursor: "pointer" }}
           onClick={() => {

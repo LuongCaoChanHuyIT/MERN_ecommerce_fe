@@ -70,7 +70,6 @@ export const orderSlide = createSlice({
         (item) => !valuesToRemove.includes(item?.checked)
       );
       state.orderItems = filteredItems;
-      console.log(filteredItems);
     },
     provisonalOrder: (state) => {
       let total = 0;

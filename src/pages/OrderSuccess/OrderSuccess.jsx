@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Image, InputNumber, Row } from "antd";
+import { Col, Image, Row } from "antd";
 import { WapperContentOrder } from "./style";
 import { convertPrice } from "../../utils";
 import { useSelector } from "react-redux";
@@ -11,7 +11,6 @@ const OrderSuccess = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
 
-  console.log(order, user);
   return (
     <div
       style={{
@@ -67,7 +66,7 @@ const OrderSuccess = () => {
                 </div>
               </div>
               <WrapperProduct>
-                {order?.orderItems?.map((order) => (
+                {order?.orderItemSelected?.map((order) => (
                   <Row key={order?.product}>
                     <WrapperProductCol
                       span={8}
