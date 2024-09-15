@@ -48,6 +48,9 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
           Quản lý hệ thống
         </WrapprerContentPopup>
       )}
+      <WrapprerContentPopup onClick={() => navigate("/my-order")}>
+        Đơn hàng của tôi
+      </WrapprerContentPopup>
       <WrapprerContentPopup onClick={handleLogout}>
         Đăng xuất
       </WrapprerContentPopup>

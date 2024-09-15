@@ -90,7 +90,7 @@ const ProfilePage = () => {
                 />
                 <ButtonComponent
                   size={"lagre"}
-                  textButton={"Cập nhật"}
+                  textButton="Cập nhật"
                   onClick={handleUpdate}
                   width="fit-content"
                 ></ButtonComponent>
@@ -105,7 +105,7 @@ const ProfilePage = () => {
                 />
                 <ButtonComponent
                   size={"lagre"}
-                  textButton={"Cập nhật"}
+                  textButton="Cập nhật"
                   onClick={handleUpdate}
                   width="fit-content"
                 ></ButtonComponent>
@@ -120,7 +120,7 @@ const ProfilePage = () => {
                 />
                 <ButtonComponent
                   size={"lagre"}
-                  textButton={"Cập nhật"}
+                  textButton="Cập nhật"
                   onClick={handleUpdate}
                   width="fit-content"
                 ></ButtonComponent>
@@ -135,7 +135,7 @@ const ProfilePage = () => {
                 />
                 <ButtonComponent
                   size={"lagre"}
-                  textButton={"Cập nhật"}
+                  textButton="Cập nhật"
                   onClick={handleUpdate}
                   width="fit-content"
                 ></ButtonComponent>
@@ -171,7 +171,7 @@ const ProfilePage = () => {
 
                 <ButtonComponent
                   size={"lagre"}
-                  textButton={"Cập nhật"}
+                  textButton="Cập nhật"
                   onClick={handleUpdate}
                   width="fit-content"
                 ></ButtonComponent>

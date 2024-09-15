@@ -1,5 +1,6 @@
 import AdminPage from "../pages/AdminPage/AdminPage";
 import HomePage from "../pages/HomePage/HomePage";
+import MyOrderPage from "../pages/MyOrderPage/MyOrderPage";
 import NotFound from "../pages/NotFound/NotFound";
 import OrderPage from "../pages/OrderPage/OrderPage";
 import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
@@ -75,6 +76,12 @@ export const routes = [
   {
     path: "/order-success",
     page: OrderSuccess,
+    isShowHeader: true,
+    isPrivate: false,
+  },
+  {
+    path: "/my-order",
+    page: MyOrderPage,
     isShowHeader: true,
     isPrivate: false,
   },
