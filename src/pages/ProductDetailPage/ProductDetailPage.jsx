@@ -11,7 +11,7 @@ const ProductDetailPage = () => {
         padding: "0 120px",
         backgroundColor: "#efefef",
         fontSize: "1.2rem",
-        height: "100vh",
+        height: "auto",
       }}
     >
       <h4 style={{ marginTop: 0 }}>

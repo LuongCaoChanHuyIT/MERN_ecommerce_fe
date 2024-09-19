@@ -69,6 +69,7 @@ const HomePage = () => {
             {products?.data?.map((product) => {
               return (
                 <Col
+                  key={product._id}
                   style={{ padding: "3px" }}
                   span={4}
                   xs={{

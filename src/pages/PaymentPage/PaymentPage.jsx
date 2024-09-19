@@ -9,12 +9,20 @@ import { useMutationHooks } from "../../hooks/useMutationHooks";
 import { createOrder } from "../../services/OrderService";
 import { useNavigate } from "react-router-dom";
 import { deleteProductChecked } from "../../redux/slides/orderSlide";
+import { PayPalButton } from "react-paypal-button-v2";
+import { getConfig } from "../../services/PaymentService";
+
 const PaymentPage = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [value, setValue] = useState(1);
+  const [shipping, setShipping] = useState(1);
+  const [payment, setPayment] = useState(1);
+  const [sdkReady, setSdkReady] = useState(false);
+  const [totalPaypal] = useState(order.totalPrice);
+  // const [totalPaypal] = useState(String(0.01));
+
   const mutation = useMutationHooks((data) => {
     return createOrder(user?.access_token, data);
   });
@@ -39,12 +47,50 @@ const PaymentPage = () => {
       totalPrice: order?.totalPrice,
       user: user?.id,
       taxPrice: order?.taxPrice,
+      email: user?.email,
+      isPaid: false,
     });
   };
   const onChange = (e) => {
-    setValue(e.target.value);
+    setPayment(e.target.value);
   };
-
+  const onChangeShippng = (e) => {
+    setShipping(e.target.value);
+  };
+  const addPaypalScript = async () => {
+    const { data } = await getConfig();
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = `https://sandbox.paypal.com/sdk/js?client-id=${data}`;
+    script.async = true;
+    script.onload = () => {
+      setSdkReady(true);
+    };
+    document.body.appendChild(script);
+  };
+  useEffect(() => {
+    if (window.paypal) {
+      addPaypalScript();
+    } else {
+      setSdkReady(true);
+    }
+  }, []);
+  const onSuccessPaypal = (details, data) => {
+    mutation.mutate({
+      orderItems: order?.orderItemSelected,
+      fullname: user?.name,
+      address: user?.address,
+      phone: user?.phone,
+      paymentMethod: "payment",
+      itemsPrice: order?.provisionalPrice,
+      shippingPrice: order?.shippingPrice,
+      totalPrice: order?.totalPrice,
+      user: user?.id,
+      taxPrice: order?.taxPrice,
+      isPaid: true,
+      paidsAt: details.update_time,
+    });
+  };
   return (
     <div
       style={{
@@ -76,13 +122,13 @@ const PaymentPage = () => {
                       "linear-gradient(136deg,#eff8ff -85%,#f5faff -1%)",
                   }}
                 >
-                  <Radio.Group onChange={onChange} value={value}>
+                  <Radio.Group onChange={onChangeShippng} value={shipping}>
                     <Space direction="vertical">
                       <WrapperIconCheckRadio value={1}>
                         <span>FAST</span> Giao hàng nhanh
                       </WrapperIconCheckRadio>
                       <WrapperIconCheckRadio value={2}>
-                        <span>GOJEK</span> Giao hàng nhanh{" "}
+                        <span>GOJEK</span> Giao hàng nhanh
                       </WrapperIconCheckRadio>
                     </Space>
                   </Radio.Group>
@@ -105,10 +151,13 @@ const PaymentPage = () => {
                       "linear-gradient(136deg,#eff8ff -85%,#f5faff -1%)",
                   }}
                 >
-                  <Radio.Group onChange={onChange} value={value}>
+                  <Radio.Group onChange={onChange} value={payment}>
                     <Space direction="vertical">
                       <WrapperIconCheckRadio value={1}>
                         Thanh toán bằng<span>tiền mặt</span>
+                      </WrapperIconCheckRadio>
+                      <WrapperIconCheckRadio value={2}>
+                        Thanh toán bằng<span>Paypal</span>
                       </WrapperIconCheckRadio>
                     </Space>
                   </Radio.Group>
@@ -197,18 +246,30 @@ const PaymentPage = () => {
                 marginTop: "10px",
               }}
             >
-              <Button
-                type="primary"
-                danger
-                style={{
-                  fontSize: "1.6rem",
-                  padding: "25px 60px",
-                  width: "100%",
-                }}
-                onClick={handlePay}
-              >
-                Mua hàng
-              </Button>
+              {payment === 2 && sdkReady ? (
+                <div style={{ width: "100%" }}>
+                  <PayPalButton
+                    amount={Math.round(totalPaypal * 0.000041)}
+                    onSuccess={onSuccessPaypal}
+                    onError={(e) => {
+                      console.log(e);
+                    }}
+                  />
+                </div>
+              ) : (
+                <Button
+                  type="primary"
+                  danger
+                  style={{
+                    fontSize: "1.6rem",
+                    padding: "25px 60px",
+                    width: "100%",
+                  }}
+                  onClick={handlePay}
+                >
+                  Mua hàng
+                </Button>
+              )}
             </div>
           </Col>
         </Row>

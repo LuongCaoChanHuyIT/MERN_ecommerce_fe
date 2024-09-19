@@ -40,9 +40,8 @@ const CardComponent = (props) => {
         padding: "8px",
         borderRadius: "4px",
         backgroundColor: `${countInStock === 0 && "#f0f0f0"}`,
-        cursor: `${countInStock === 0 && "not-allowed"}`,
       }}
-      onClick={() => countInStock !== 0 && handleDetailProduct(id)}
+      onClick={() => handleDetailProduct(id)}
       cover={<img alt="example" src={image} height={200} />}
     >
       <StyleNameProduct>{name}</StyleNameProduct>

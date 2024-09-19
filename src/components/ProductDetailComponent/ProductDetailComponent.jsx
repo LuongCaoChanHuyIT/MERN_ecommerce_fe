@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Image, Row, Spin } from "antd";
 import { MinusOutlined, PlusOutlined, StarFilled } from "@ant-design/icons";
 import ButtonComponent from "../ButtonComponent/ButtonComponent";
 
 import {
-  WrapperStyleImageSmall,
-  WrapperStyleColImage,
   WrapperStyleNameProduct,
   WrapperStyleTextSell,
   WrapperPriceProduct,
@@ -14,7 +12,6 @@ import {
   WrapperQualityProduct,
   WrapperNumberQuantity,
   WrapperButtonChoose,
-  WrapperButtonCard,
 } from "./style";
 import * as ProductService from "../../services/ProductService";
 import { useQuery } from "@tanstack/react-query";
@@ -23,8 +20,10 @@ import {
   addOrderProduct,
   provisonalOrder,
 } from "../../redux/slides/orderSlide";
-import { convertPrice } from "../../utils";
-import defaultImage from "../../assets/images/account.png";
+import { convertPrice, initFacebookSDK } from "../../utils";
+import LikeButtonComponent from "../LikeButtonComponent/LikeButtonComponent";
+import CommentComponent from "../CommentComponent/CommentComponent";
+
 const ProductDetailComponent = ({ idProduct }) => {
   const [numProduct, setNumproduct] = useState(1);
   const user = useSelector((state) => state.user);
@@ -46,6 +45,7 @@ const ProductDetailComponent = ({ idProduct }) => {
     for (let i = 0; i < num; i++) {
       row.push(
         <StarFilled
+          key={i}
           style={{ fontSize: "1.2rem", color: "rgb(253, 216, 54)" }}
         />
       );
@@ -56,7 +56,7 @@ const ProductDetailComponent = ({ idProduct }) => {
     if (type === "increase") {
       setNumproduct((prev) => prev + 1);
     } else {
-      setNumproduct((prev) => prev - 1);
+      if (numProduct !== 1) setNumproduct((prev) => prev - 1);
     }
   };
   const handleAddOrderProduct = () => {
@@ -79,10 +79,18 @@ const ProductDetailComponent = ({ idProduct }) => {
     );
     // }
   };
+  useEffect(() => {
+    initFacebookSDK();
+  }, []);
   return (
     <Spin spinning={isLoading}>
       <Row
-        style={{ padding: "16px", display: "flex", backgroundColor: "#fff" }}
+        style={{
+          padding: "16px",
+          display: "flex",
+          backgroundColor: "#fff",
+          width: "100%",
+        }}
       >
         <Col span={10} style={{ paddingRight: "10px" }}>
           <Image
@@ -90,7 +98,7 @@ const ProductDetailComponent = ({ idProduct }) => {
             preview={false}
             alt="image product"
           ></Image>
-          <Row style={{ paddingTop: "10px", justifyContent: "space-between" }}>
+          {/* <Row style={{ paddingTop: "10px", justifyContent: "space-between" }}>
             <WrapperStyleColImage span={4}>
               <WrapperStyleImageSmall
                 src={defaultImage}
@@ -133,7 +141,7 @@ const ProductDetailComponent = ({ idProduct }) => {
                 alt="image product"
               ></WrapperStyleImageSmall>
             </WrapperStyleColImage>
-          </Row>
+          </Row> */}
         </Col>
         <Col span={14}>
           <WrapperStyleNameProduct>
@@ -141,7 +149,9 @@ const ProductDetailComponent = ({ idProduct }) => {
           </WrapperStyleNameProduct>
           <div>
             {renderStar(productDetatils?.rating)}
-            <WrapperStyleTextSell> | Đã bán 1000+ </WrapperStyleTextSell>
+            <WrapperStyleTextSell>
+              | Đã bán {productDetatils?.selled}+{" "}
+            </WrapperStyleTextSell>
           </div>
           <WrapperPriceProduct>
             <WrapperPriceTextProduct>
@@ -153,6 +163,7 @@ const ProductDetailComponent = ({ idProduct }) => {
             <span className="address">{user?.address}</span>
             <span className="change-address"> - Đổi địa chỉ</span>
           </WrapperAddressPriceProduct>
+          <LikeButtonComponent dataHref="https://developers.facebook.com/docs/plugins/" />
           <WrapperQualityProduct>
             <span>Số lượng</span>
             <div style={{ display: "flex", margin: "10px" }}>
@@ -175,12 +186,23 @@ const ProductDetailComponent = ({ idProduct }) => {
             </div>
           </WrapperQualityProduct>
           <div style={{ marginTop: "50px" }}>
-            <WrapperButtonChoose onClick={handleAddOrderProduct}>
+            <WrapperButtonChoose
+              disabled={productDetatils?.countInStock === 0 ? true : false}
+              onClick={handleAddOrderProduct}
+            >
               Chọn mua
             </WrapperButtonChoose>
-            <WrapperButtonCard>Thêm giỏ hàng</WrapperButtonCard>
+            <div
+              style={{ fontSize: "1.2rem", color: "red", textAlign: "center" }}
+            >
+              {productDetatils?.countInStock === 0
+                ? "Sản phẩm hết hàng"
+                : "Chúc quý khách mua hàng vui vẻ"}
+            </div>
+            {/* <WrapperButtonCard>Thêm giỏ hàng</WrapperButtonCard> */}
           </div>
         </Col>
+        <CommentComponent dataHref="https://developers.facebook.com/docs/plugins/comments#configurator" />
       </Row>
     </Spin>
   );

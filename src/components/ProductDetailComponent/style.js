@@ -72,7 +72,6 @@ export const WrapperButtonChoose = styled(Button)`
   width: fit-content;
   height: fit-content;
   padding: 10px 30px;
-  margin-top: 30px;
 
   border-radius: 0;
 `;
