@@ -33,23 +33,21 @@ const TableOrder = ({
 
   const renderProducts = (data) => {
     return data.map((item) => (
-      <>
-        <div key={item._id} style={{ display: "flex" }}>
-          <Image
-            src={item.image}
-            style={{
-              height: "50px",
-              width: "auto",
-              objectFit: "cover",
-            }}
-            alt="avatar"
-          />
-          <span style={{ padding: "10px" }}>{item.name}</span>
-          <span style={{ padding: "10px", marginLeft: "auto" }}>
-            {convertPrice(item.price * item.amount)}
-          </span>
-        </div>
-      </>
+      <div key={item._id} style={{ display: "flex" }}>
+        <Image
+          src={item.image}
+          style={{
+            height: "50px",
+            width: "auto",
+            objectFit: "cover",
+          }}
+          alt="avatar"
+        />
+        <span style={{ padding: "10px" }}>{item.name}</span>
+        <span style={{ padding: "10px", marginLeft: "auto" }}>
+          {convertPrice(item.price * item.amount)}
+        </span>
+      </div>
     ));
   };
   const renderShippingAddress = (data) => {
@@ -116,7 +114,7 @@ const TableOrder = ({
   ];
 
   const [listCheck, setListCheck] = useState([]);
-  console.log(listCheck);
+
   const newColumnExport = useMemo(() => {
     // eslint-disable-next-line array-callback-return
     const filter = columns.filter((col) => {
@@ -126,7 +124,7 @@ const TableOrder = ({
     });
     return filter;
   }, [columns]);
-  console.log(newColumnExport);
+
   const dataTable = dataOrders?.data?.map((order) => {
     return { ...order, key: order._id };
   });

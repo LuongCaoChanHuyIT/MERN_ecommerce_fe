@@ -29,7 +29,6 @@ const TypeProductPage = () => {
     }
   };
   useEffect(() => {
-    console.log(state);
     if (state) {
       setIsLoading(true);
       fetchProductType(state, paginate.page, paginate.limit);
@@ -83,6 +82,7 @@ const TypeProductPage = () => {
                 .map((product) => {
                   return (
                     <Col
+                      key={product._id}
                       style={{ padding: "3px" }}
                       span={6}
                       xs={{
@@ -99,7 +99,6 @@ const TypeProductPage = () => {
                       }}
                     >
                       <CardComponent
-                        key={product._id}
                         countInStock={product.countInStock}
                         description={product.description}
                         image={product.image}
