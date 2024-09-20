@@ -1,69 +1,69 @@
 import React, { useState } from "react";
 import { WrapperHeader } from "./style";
 import { useQueryHooks } from "../../hooks/useQueryHooks";
-import { getAlluser } from "../../services/UserService";
+import { getAllOrder } from "../../services/OrderService.js";
 import { useSelector } from "react-redux";
-import TableUser from "./TableUser.jsx";
+import TableOrder from "./TableOrder.jsx";
 import Create from "./Create.jsx";
 import Update from "./Update.jsx";
 import Delete from "./Delete.jsx";
 
-const AdminUserComponent = () => {
+const AdminOrderComponent = () => {
   const user = useSelector((state) => state.user);
   const [rowSelected, setRowSelected] = useState();
   const [isOpenCreate, setIsOpenCreate] = useState(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
-  const handleDeleteUser = () => {
+  const handleDeleteOrder = () => {
     setIsOpenDelete(true);
   };
-  const handleDetailUser = () => {
+  const handleDetailOrder = () => {
     setIsOpenUpdate(true);
   };
-  const handleCreateUser = () => {
+  const handleCreateOrder = () => {
     setIsOpenCreate(true);
   };
-  const getAllUser = async () => {
-    const res = await getAlluser(user?.access_token);
+  const getAllOrders = async () => {
+    const res = await getAllOrder(user?.access_token);
     return res;
   };
-  const queryUsers = useQueryHooks(getAllUser, "user");
-  const { data: dataUsers, isLoading: isLoadingUser } = queryUsers;
-  const dataUserRefetch = () => {
-    queryUsers.refetch();
+  const queryOrders = useQueryHooks(getAllOrders, "order");
+  const { data: dataOrders, isLoading: isLoadingOrder } = queryOrders;
+  const dataOrderRefetch = () => {
+    queryOrders.refetch();
   };
 
   return (
     <div>
-      <WrapperHeader>Quản lý người dùng</WrapperHeader>
-      <TableUser
-        handleDeleteUser={handleDeleteUser}
-        handleDetailUser={handleDetailUser}
-        handleCreateUser={handleCreateUser}
-        dataUsers={dataUsers}
+      <WrapperHeader>Quản lý hóa đơn</WrapperHeader>
+      <TableOrder
+        handleDeleteOrder={handleDeleteOrder}
+        handleDetailOrder={handleDetailOrder}
+        handleCreateOrder={handleCreateOrder}
+        dataOrders={dataOrders}
         setRowSelected={setRowSelected}
-        isLoadingUser={isLoadingUser}
-        dataUserRefetch={dataUserRefetch}
+        isLoadingOrder={isLoadingOrder}
+        dataOrderRefetch={dataOrderRefetch}
       />
-      <Create
+      {/* <Create
         isOpenCreate={isOpenCreate}
         setIsOpenCreate={setIsOpenCreate}
-        dataUserRefetch={dataUserRefetch}
+        dataOrderRefetch={dataOrderRefetch}
       />
       <Update
         isOpenUpdate={isOpenUpdate}
         setIsOpenUpdate={setIsOpenUpdate}
         rowSelected={rowSelected}
-        dataUserRefetch={dataUserRefetch}
+        dataOrderRefetch={dataOrderRefetch}
       />
       <Delete
         isOpenDelete={isOpenDelete}
         setIsOpenDelete={setIsOpenDelete}
         rowSelected={rowSelected}
-        dataUserRefetch={dataUserRefetch}
-      />
+        dataOrderRefetch={dataOrderRefetch}
+      /> */}
     </div>
   );
 };
 
-export default AdminUserComponent;
+export default AdminOrderComponent;

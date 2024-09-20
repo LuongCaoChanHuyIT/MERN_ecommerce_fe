@@ -33,6 +33,10 @@ const SignInPage = () => {
     if (data?.status === "SUCCESS") {
       navigate("/");
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
+      localStorage.setItem(
+        "refresh_token",
+        JSON.stringify(data?.refresh_token)
+      );
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token);
         if (decoded?.id) {
@@ -54,8 +58,10 @@ const SignInPage = () => {
     mutation.mutate({ email, password });
   };
   const handleGetDetailUser = async (id, token) => {
+    const storage = localStorage.getItem("refresh_token");
+    const refreshToken = JSON.parse(storage);
     const res = await UserService.getDetailUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
+    dispatch(updateUser({ ...res?.data, access_token: token, refreshToken }));
   };
 
   return (
