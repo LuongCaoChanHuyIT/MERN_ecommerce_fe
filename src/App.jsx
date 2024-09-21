@@ -35,6 +35,7 @@ function App() {
       if (decoded?.exp < currentTime.getTime() / 1000) {
         if (decodeRefreshToken?.exp > currentTime.getTime() / 1000) {
           const data = await UserService.refreshToken();
+          console.log(decodeRefreshToken, data);
           config.headers["token"] = `Beare ${data?.access_token}`;
         }
       }
