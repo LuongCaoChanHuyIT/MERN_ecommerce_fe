@@ -52,5 +52,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://mern-ecommerce-be-myxt.onrender.com"
+  "proxy": "https://mern-ecommerce-be-myxt.onrender.com/api"
 }
