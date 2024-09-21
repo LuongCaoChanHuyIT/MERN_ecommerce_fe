@@ -32,10 +32,12 @@ function App() {
       let strongeRefreshToken = localStorage.getItem("refresh_token");
       const refreshToken = JSON.parse(strongeRefreshToken);
       const decodeRefreshToken = jwtDecode(refreshToken);
+
       if (decoded?.exp < currentTime.getTime() / 1000) {
         if (decodeRefreshToken?.exp > currentTime.getTime() / 1000) {
-          const data = await UserService.refreshToken();
-          console.log(decodeRefreshToken, data);
+          const data = await UserService.refreshToken(refreshToken);
+
+          console.log(data);
           config.headers["token"] = `Beare ${data?.access_token}`;
         }
       }
@@ -54,7 +56,8 @@ function App() {
       const decodeRefreshToken = jwtDecode(refreshToken);
       if (decoded?.exp < currentTime.getTime() / 1000) {
         if (decodeRefreshToken?.exp > currentTime.getTime() / 1000) {
-          const data = await UserService.refreshToken();
+          const data = await UserService.refreshToken(refreshToken);
+
           config.headers["token"] = `Beare ${data?.access_token}`;
         }
       }
@@ -73,7 +76,7 @@ function App() {
       const decodeRefreshToken = jwtDecode(refreshToken);
       if (decoded?.exp < currentTime.getTime() / 1000) {
         if (decodeRefreshToken?.exp > currentTime.getTime() / 1000) {
-          const data = await UserService.refreshToken();
+          const data = await UserService.refreshToken(refreshToken);
           config.headers["token"] = `Beare ${data?.access_token}`;
         }
       }
