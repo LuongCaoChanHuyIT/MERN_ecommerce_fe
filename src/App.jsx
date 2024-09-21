@@ -48,9 +48,14 @@ function App() {
     async (config) => {
       const { decoded } = handleDecoded();
       const currentTime = new Date();
+      let strongeRefreshToken = localStorage.getItem("refresh_token");
+      const refreshToken = JSON.parse(strongeRefreshToken);
+      const decodeRefreshToken = jwtDecode(refreshToken);
       if (decoded?.exp < currentTime.getTime() / 1000) {
-        const data = await UserService.refreshToken();
-        config.headers["token"] = `Beare ${data?.access_token}`;
+        if (decodeRefreshToken?.exp > currentTime.getTime() / 1000) {
+          const data = await UserService.refreshToken();
+          config.headers["token"] = `Beare ${data?.access_token}`;
+        }
       }
       return config;
     },
@@ -62,9 +67,14 @@ function App() {
     async (config) => {
       const { decoded } = handleDecoded();
       const currentTime = new Date();
+      let strongeRefreshToken = localStorage.getItem("refresh_token");
+      const refreshToken = JSON.parse(strongeRefreshToken);
+      const decodeRefreshToken = jwtDecode(refreshToken);
       if (decoded?.exp < currentTime.getTime() / 1000) {
-        const data = await UserService.refreshToken();
-        config.headers["token"] = `Beare ${data?.access_token}`;
+        if (decodeRefreshToken?.exp > currentTime.getTime() / 1000) {
+          const data = await UserService.refreshToken();
+          config.headers["token"] = `Beare ${data?.access_token}`;
+        }
       }
       return config;
     },

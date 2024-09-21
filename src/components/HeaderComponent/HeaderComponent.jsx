@@ -35,6 +35,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     setLoading(true);
     await UserService.logoutUser();
     localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     dispacth(resetUser());
     setLoading(false);
   };

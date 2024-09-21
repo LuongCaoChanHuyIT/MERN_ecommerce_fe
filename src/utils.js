@@ -80,3 +80,4 @@ export const initFacebookSDK = () => {
     fjs.parentNode.insertBefore(js, fjs);
   })(document, "script", "facebook-jssdk");
 };
+// "proxy": "https://mern-ecommerce-be-mzgp.onrender.com"

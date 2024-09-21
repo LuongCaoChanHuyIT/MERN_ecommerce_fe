@@ -9,9 +9,9 @@ import { useMutationHooks } from "../../hooks/useMutationHooks";
 import { createOrder } from "../../services/OrderService";
 import { useNavigate } from "react-router-dom";
 import { deleteProductChecked } from "../../redux/slides/orderSlide";
-import { PayPalButton } from "react-paypal-button-v2";
+// import { PayPalButton } from "react-paypal-button-v2";
 import { getConfig } from "../../services/PaymentService";
-
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 const PaymentPage = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
@@ -75,7 +75,7 @@ const PaymentPage = () => {
       setSdkReady(true);
     }
   }, []);
-  const onSuccessPaypal = (details, data) => {
+  const onSuccessPaypal = (update_time) => {
     mutation.mutate({
       orderItems: order?.orderItemSelected,
       fullname: user?.name,
@@ -88,7 +88,46 @@ const PaymentPage = () => {
       user: user?.id,
       taxPrice: order?.taxPrice,
       isPaid: true,
-      paidsAt: details.update_time,
+      paidsAt: update_time,
+    });
+  };
+  const handleCreateOrder = (data, actions) => {
+    // return actions.order
+    //   .create({
+    //     purchase_units: [
+    //       {
+    //         amount: {
+    //           // value: Math.round(totalPaypal * 0.000041),
+    //           value: "0.01",
+    //         },
+    //       },
+    //     ],
+    //   })
+    //   .then(() => {
+    //     // let today = new Date().toLocaleDateString();
+    //     // onSuccessPaypal(today);
+    //   });
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: {
+              value: Math.round(totalPaypal * 0.000041),
+            },
+          },
+        ],
+      })
+      .then((orderID) => {
+        // let today = new Date().toLocaleDateString();
+        // onSuccessPaypal(today);
+        return orderID;
+      });
+  };
+  const handleOnApprove = (data, actions) => {
+    return actions.order.capture().then(function (details) {
+      // console.log(details);
+
+      onSuccessPaypal(details.create_time);
     });
   };
   return (
@@ -248,13 +287,38 @@ const PaymentPage = () => {
             >
               {payment === 2 && sdkReady ? (
                 <div style={{ width: "100%" }}>
-                  <PayPalButton
+                  {/* <PayPalButton
                     amount={Math.round(totalPaypal * 0.000041)}
                     onSuccess={onSuccessPaypal}
                     onError={(e) => {
                       console.log(e);
                     }}
-                  />
+                  /> */}
+                  {/* <PayPalScriptProvider
+                    options={{
+                      clientId:
+                        "Aet5e1ArWxLbp5CF2HMoCdcFmSAulkIQMYcy5So7be1RrWUYPdCWc8moL9vR8HppQLfbX2b9gPQq6f9l",
+                    }}
+                  >
+                    <PayPalButtons
+                      createOrder={handleCreateOrder}
+                      // onApprove={this.onApprove}
+                      // onError={this.onError}
+                      // onClick={this.onClick}
+                    />
+                  </PayPalScriptProvider> */}
+                  <PayPalScriptProvider
+                    options={{
+                      clientId:
+                        "Aet5e1ArWxLbp5CF2HMoCdcFmSAulkIQMYcy5So7be1RrWUYPdCWc8moL9vR8HppQLfbX2b9gPQq6f9l",
+                    }}
+                  >
+                    <PayPalButtons
+                      style={{ layout: "horizontal" }}
+                      createOrder={handleCreateOrder}
+                      onApprove={handleOnApprove}
+                    />
+                  </PayPalScriptProvider>
                 </div>
               ) : (
                 <Button
